@@ -1,9 +1,9 @@
 <?php
 // Declare Variables 
-         $hostname='localhost';
-	 $usernamehost='root';
-	 $passwordhost='';
-	 $databasename='diavatly_db';
+     $hostname='localhost';
+	 $usernamehost='mapselli676e_diavatly_quanly';
+	 $passwordhost='cntt2019';
+	 $databasename='mapselli676e_diavatly_quanly';
          $php ="php";
 	 $java="java";
          $css="css";
