@@ -1,14 +1,16 @@
 <?php
-// delete_pause.php: Xóa lần tạm dừng
+// delete_pause.php: Xóa lần tạm dừng (AJAX, trả về JSON)
+ob_clean();
 require_once("select_data.php");
+header('Content-Type: application/json');
 
-$id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+$id = isset($_POST['id']) ? intval($_POST['id']) : 0;
 if ($id <= 0) {
-    echo '<div style="color:red;">ID không hợp lệ.</div>';
+    echo json_encode(["success" => false, "message" => "ID không hợp lệ."]);
     exit;
 }
 
-// Lấy thông tin để hiển thị xác nhận (nếu cần)
+// Kiểm tra tồn tại
 $sql = "SELECT hoso FROM hososcbd_iso_pauses WHERE id=?";
 $stmt = mysqli_prepare($link, $sql);
 mysqli_stmt_bind_param($stmt, "i", $id);
@@ -18,7 +20,7 @@ $pause = mysqli_fetch_assoc($result);
 mysqli_stmt_close($stmt);
 
 if (!$pause) {
-    echo '<div style="color:red;">Không tìm thấy dữ liệu.</div>';
+    echo json_encode(["success" => false, "message" => "Không tìm thấy dữ liệu."]);
     exit;
 }
 
@@ -29,8 +31,7 @@ mysqli_stmt_bind_param($stmt, "i", $id);
 $ok = mysqli_stmt_execute($stmt);
 mysqli_stmt_close($stmt);
 if ($ok) {
-    echo '<div style="color:green;">Đã xóa thành công!</div>';
+    echo json_encode(["success" => true, "message" => "Đã xóa thành công!"]);
 } else {
-    echo '<div style="color:red;">Lỗi khi xóa.</div>';
+    echo json_encode(["success" => false, "message" => "Lỗi khi xóa."]);
 }
-echo '<a href="javascript:history.back()">Quay lại</a>';

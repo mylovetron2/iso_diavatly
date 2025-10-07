@@ -1090,10 +1090,11 @@ $currentGroupName = isset($groupNames[$nhomsct]) ? $groupNames[$nhomsct] : "ALL"
                                         }
                                         echo '</span>';
                                         echo '<span>';
-                                        echo '<a href="edit_pause.php?id=' . $pause['id'] . '" class="btn btn-outline-primary btn-sm btn-icon" title="Sửa"><i class="fas fa-edit"></i></a> ';
-                                        echo '<a href="delete_pause.php?id=' . $pause['id'] . '" class="btn btn-outline-danger btn-sm btn-icon" title="Xóa" onclick="return confirm(\'Xác nhận xóa lần tạm dừng này?\');"><i class="fas fa-trash"></i></a>';
+                                        echo '<button type="button" class="btn btn-outline-primary btn-sm btn-icon btn-edit-pause" data-id="' . $pause['id'] . '" data-start="' . htmlspecialchars($pause['pause_start']) . '" data-end="' . htmlspecialchars($pause['pause_end']) . '" data-reason="' . htmlspecialchars($pause['pause_reason']) . '" title="Sửa"><i class="fas fa-edit"></i></button> ';
+                                        echo '<button type="button" class="btn btn-outline-danger btn-sm btn-icon btn-delete-pause" data-id="' . $pause['id'] . '" title="Xóa"><i class="fas fa-trash"></i></button>';
                                         echo '</span>';
                                         echo '</li>';
+
                                     }
                                     echo '</ul></div></div>';
                                 }
@@ -1235,6 +1236,51 @@ $currentGroupName = isset($groupNames[$nhomsct]) ? $groupNames[$nhomsct] : "ALL"
                             }
                         });
                         </script>
+<script>
+// Xóa tạm dừng bằng AJAX
+document.addEventListener('DOMContentLoaded', function() {
+    document.body.addEventListener('click', function(e) {
+        if (e.target.closest('.btn-delete-pause')) {
+            var btn = e.target.closest('.btn-delete-pause');
+            var id = btn.getAttribute('data-id');
+            if (!confirm('Xác nhận xóa lần tạm dừng này?')) return;
+            fetch('delete_pause.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: 'id=' + encodeURIComponent(id)
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (window.pauseToastBody) pauseToastBody.textContent = data.message;
+                if (window.pauseToast) {
+                    if (data.success) {
+                        pauseToast.classList.remove('text-bg-danger');
+                        pauseToast.classList.add('text-bg-success');
+                    } else {
+                        pauseToast.classList.remove('text-bg-success');
+                        pauseToast.classList.add('text-bg-danger');
+                    }
+                    if (window.toastInstance) toastInstance.show();
+                }
+                if (typeof loadPauseList === 'function') {
+                    var hoso = document.getElementById('hosoInput')?.value;
+                    loadPauseList(hoso);
+                } else {
+                    location.reload();
+                }
+            })
+            .catch(() => {
+                if (window.pauseToastBody) pauseToastBody.textContent = 'Lỗi kết nối máy chủ!';
+                if (window.pauseToast) {
+                    pauseToast.classList.remove('text-bg-success');
+                    pauseToast.classList.add('text-bg-danger');
+                    if (window.toastInstance) toastInstance.show();
+                }
+            });
+        }
+    });
+});
+</script>
 </body>
 <!-- Bootstrap 5 CSS & JS (chèn nếu chưa có) -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -1437,5 +1483,102 @@ $currentGroupName = isset($groupNames[$nhomsct]) ? $groupNames[$nhomsct] : "ALL"
             });
         });
     </script>
+    <!-- Modal sửa tạm dừng -->
+<div class="modal fade" id="editPauseModal" tabindex="-1" aria-labelledby="editPauseModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form id="editPauseForm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editPauseModalLabel">Sửa lần tạm dừng</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="id" id="editPauseId">
+                    <div class="mb-3">
+                        <label class="form-label">Ngày bắt đầu</label>
+                        <input type="date" name="pause_start" id="editPauseStart" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Ngày kết thúc</label>
+                        <input type="date" name="pause_end" id="editPauseEnd" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Lý do</label>
+                        <textarea name="pause_reason" id="editPauseReason" class="form-control"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Lưu</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+// Sửa tạm dừng bằng modal + AJAX
+document.addEventListener('DOMContentLoaded', function() {
+    var editPauseModal = document.getElementById('editPauseModal');
+    var editPauseForm = document.getElementById('editPauseForm');
+    var editPauseId = document.getElementById('editPauseId');
+    var editPauseStart = document.getElementById('editPauseStart');
+    var editPauseEnd = document.getElementById('editPauseEnd');
+    var editPauseReason = document.getElementById('editPauseReason');
+    var editModalInstance = null;
+    if (editPauseModal) editModalInstance = new bootstrap.Modal(editPauseModal);
+
+    document.body.addEventListener('click', function(e) {
+        if (e.target.closest('.btn-edit-pause')) {
+            var btn = e.target.closest('.btn-edit-pause');
+            editPauseId.value = btn.getAttribute('data-id');
+            editPauseStart.value = btn.getAttribute('data-start');
+            editPauseEnd.value = btn.getAttribute('data-end');
+            editPauseReason.value = btn.getAttribute('data-reason');
+            if (editModalInstance) editModalInstance.show();
+        }
+    });
+
+    if (editPauseForm) {
+        editPauseForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            var formData = new FormData(editPauseForm);
+            fetch('edit_pause.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (window.pauseToastBody) pauseToastBody.textContent = data.message;
+                if (window.pauseToast) {
+                    if (data.success) {
+                        pauseToast.classList.remove('text-bg-danger');
+                        pauseToast.classList.add('text-bg-success');
+                    } else {
+                        pauseToast.classList.remove('text-bg-success');
+                        pauseToast.classList.add('text-bg-danger');
+                    }
+                    if (window.toastInstance) toastInstance.show();
+                }
+                if (data.success && editModalInstance) editModalInstance.hide();
+                if (typeof loadPauseList === 'function') {
+                    var hoso = document.getElementById('hosoInput')?.value;
+                    loadPauseList(hoso);
+                } else {
+                    location.reload();
+                }
+            })
+            .catch(() => {
+                if (window.pauseToastBody) pauseToastBody.textContent = 'Lỗi kết nối máy chủ!';
+                if (window.pauseToast) {
+                    pauseToast.classList.remove('text-bg-success');
+                    pauseToast.classList.add('text-bg-danger');
+                    if (window.toastInstance) toastInstance.show();
+                }
+            });
+        });
+    }
+});
+</script>
+
 </body>
 </html>
