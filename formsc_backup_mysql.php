@@ -198,8 +198,8 @@ $soluong=1;
 if ($hosomaycu!=""){
 if ($hosomaycu!=$hosomay) $chonthietbi="";}
 $donvi=isset($_POST['donvi']) ? $_POST['donvi'] : '';
-$phanqsql = mysqli_query($link, "SELECT DISTINCT phanquyen  FROM users where username='$username'");
-		while($row = mysqli_fetch_array($phanqsql))
+$phanqsql = mysql_query("SELECT DISTINCT phanquyen  FROM users where username='$username'");
+		while($row = mysql_fetch_array($phanqsql))
 		{
 			$phanquyen =$row['phanquyen'];
 		}
@@ -295,9 +295,11 @@ SCTB&#272;VL </td>
 </table>";
 $curday = date("d/m/Y");
 $maxphieu=0;
-		$r3 = mysqli_query($link, "SELECT DISTINCT phieu  FROM hososcbd_iso");
-		if(mysqli_num_rows($r3)>0){
-		while($row = mysqli_fetch_array($r3))
+		$r3 ="SELECT DISTINCT phieu  FROM hososcbd_iso";
+		$result=mysqli_query($con,$r3);
+		if(mysqli_num_rows($result)>0){
+		$r3 =mysql_query("SELECT DISTINCT phieu  FROM hososcbd_iso");
+		while($row = mysql_fetch_array($r3))
 		{
 			$phieu =$row['phieu'];
 			$phieu=(int)$phieu;
@@ -320,7 +322,7 @@ $maxphieu=0;
 			'$madv',
 			'$tendv'
 			)" ;
-		 mysqli_query($link, $insert) or die(mysqli_error($link));
+		 mysql_query($insert) or die(mysql_error());
 				}
 
 echo"<form method=\"post\" action=\"formsc.php\" enctype=\"multipart/form-data\" name=\"example\">
@@ -346,8 +348,8 @@ echo"<form method=\"post\" action=\"formsc.php\" enctype=\"multipart/form-data\"
 	<td>
 	<select name=\"donvi\" onchange=\"this.form.submit()\" style=\"background:#8adaa5;width:100.5%;height:25px;\" >
 	<option value=\"\"></option>";
-		$r3 = mysqli_query($link, "SELECT DISTINCT madv,tendv FROM donvi_iso");
-		while($row = mysqli_fetch_array($r3))
+		$r3 = mysql_query("SELECT DISTINCT madv,tendv FROM donvi_iso");
+		while($row = mysql_fetch_array($r3))
 		{
 			$madv =$row['madv'];
 			$tendv = $row['tendv'];
@@ -389,22 +391,6 @@ while($i<=5){
 		<td>"; 
 		echo"<select name=\"thietbi$i\" onchange=\"this.form.submit()\" style=\"border-style:none;width:100%;height:30px;\">
 		<option value=\"\"></option>" ;
-		
-		// Populate thiết bị từ database theo đơn vị
-		if (!empty($donvi)) {
-			$tenthietbisql_tb = mysqli_query($link, "SELECT DISTINCT mavt,tenvt,model FROM thietbi_iso WHERE madv='$donvi' ORDER BY mavt");
-			if ($tenthietbisql_tb) {
-				while($row = mysqli_fetch_array($tenthietbisql_tb))
-				{
-					$mavt = $row['mavt'];	
-					$tenvt = $row['tenvt'];
-					$modelt = $row['model'];
-					if($modelt=="") $modelmay = $mavt; else $modelmay = "$mavt-$modelt";
-					echo "<option value=\"$mavt.$modelt\">$modelmay - $tenvt</option>";
-				}
-			}
-		}
-		
 		echo"</select>";
 		echo"</td>
 		<td><select name=\"somay$i\" style=\"border-style:none;width:100%;\">
@@ -417,8 +403,8 @@ while($i<=5){
 	    echo"<td>";	
 		echo"<select name=\"vitri$i\"  style=\"border-style:none;width:100%;height:30px;\">
 		<option value=\"\"></option>" ;
-    	$tenthietbisql1 = mysqli_query($link, "SELECT DISTINCT mavitri,tenvitri FROM vitri_iso") ;
-		while($row = mysqli_fetch_array($tenthietbisql1))
+    	$tenthietbisql1 = mysql_query("SELECT DISTINCT mavitri,tenvitri FROM vitri_iso") ;
+		while($row = mysql_fetch_array($tenthietbisql1))
 		{
 			$mavitri =$row['mavitri'];	
 			$tenvitri =$row['tenvitri'];	
@@ -450,8 +436,8 @@ echo"<br/><table>
 		<tr><td style=\"height:30px;padding-left:50px;width:800px;\"><strong>PHỤC VỤ SẢN XUẤT CHO LÔ: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</strong>
 		<select name=\"lo\"  style=\"border-style:none;width:50%;height:30px;font_family:Times New Roman;background:#8adaa5;height:25px;\">
 		<option value=\"$lo\">$lo</option>";
-		$sqllo = mysqli_query($link, "SELECT DISTINCT malo,tenlo FROM lo_iso") ;
-		while($row = mysqli_fetch_array($sqllo))
+		$sqllo = mysql_query("SELECT DISTINCT malo,tenlo FROM lo_iso") ;
+		while($row = mysql_fetch_array($sqllo))
 		{
 			$malo =$row['malo'];	
 			$tenlo =$row['tenlo'];	
@@ -463,8 +449,8 @@ echo"<br/><table>
 		<tr><td style=\"height:30px;padding-left:50px;width:800px;\"><strong>PHỤC VỤ SẢN XUẤT CHO MỎ :&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </strong>
 		<select name=\"mo\"  style=\"border-style:none;width:50%;height:30px;font_family:Times New Roman;background:#8adaa5;height:25px;\">
 		<option value=\"$mo\">$mo</option>";
-		$sqlmo = mysqli_query($link, "SELECT DISTINCT mamo,tenmo FROM mo_iso") ;
-		while($row = mysqli_fetch_array($sqlmo))
+		$sqlmo = mysql_query("SELECT DISTINCT mamo,tenmo FROM mo_iso") ;
+		while($row = mysql_fetch_array($sqlmo))
 		{
 			$mamo =$row['mamo'];	
 			$tenmo =$row['tenmo'];	
@@ -511,17 +497,17 @@ SCTB&#272;VL </td>
 <h2> <p style=\"color:blue;width:70%;\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;BIÊN BẢN BÀN GIAO THIẾT BỊ <br/></h2>
 </p></td></tr></table>";
 		$today = date("d/m/Y");
-		$r2 = mysqli_query($link, "SELECT DISTINCT nhom  FROM users where username='$username'");
-		while($row = mysqli_fetch_array($r2))
+		$r2 = mysql_query("SELECT DISTINCT nhom  FROM users where username='$username'");
+		while($row = mysql_fetch_array($r2))
 		{
 			$nhom =$row['nhom'];
 		}
 		$maxphieu=0;
 		if ($phanquyen=="1") 
-		$r3 = mysqli_query($link, "SELECT DISTINCT phieu  FROM hososcbd_iso");
+		$r3 = mysql_query("SELECT DISTINCT phieu  FROM hososcbd_iso");
 		else
-		$r3 = mysqli_query($link, "SELECT DISTINCT phieu  FROM hososcbd_iso where nhomsc='$nhom'");
-		while($row = mysqli_fetch_array($r3))
+		$r3 = mysql_query("SELECT DISTINCT phieu  FROM hososcbd_iso where nhomsc='$nhom'");
+		while($row = mysql_fetch_array($r3))
 		{
 			$phieu =$row['phieu'];
 			$phieu=(int)$phieu;
@@ -532,8 +518,8 @@ SCTB&#272;VL </td>
 		else if(($maxphieu>=100)&&($maxphieu<=999))  $fieu="0$maxphieu";
 		else $fieu="$maxphieu";
 		if ($maxphieu!=0) {
-		$tenthietbisql4 = mysqli_query($link, "SELECT * FROM hososcbd_iso WHERE phieu='$fieu'") ;
-		while($row = mysqli_fetch_array($tenthietbisql4))
+		$tenthietbisql4 = mysql_query("SELECT * FROM hososcbd_iso WHERE phieu='$fieu'") ;
+		while($row = mysql_fetch_array($tenthietbisql4))
 		{
 				$maquanly =$row['maql'];
 				$ngay = $row['ngayyc'];
@@ -608,8 +594,8 @@ echo"   <form method=\"post\" action=\"formsc.php\" enctype=\"multipart/form-dat
 	</tr>";
 	$i=1;
 	$k=1;
-		$tenthietbisql1 = mysqli_query($link, "SELECT * FROM hososcbd_iso WHERE phieu='$fieu'") ;
-		while($row = mysqli_fetch_array($tenthietbisql1))
+		$tenthietbisql1 = mysql_query("SELECT * FROM hososcbd_iso WHERE phieu='$fieu'") ;
+		while($row = mysql_fetch_array($tenthietbisql1))
 		{
 			$mavt =$row['mavt'];
 			$bg =$row['bg'];
@@ -621,8 +607,8 @@ echo"   <form method=\"post\" action=\"formsc.php\" enctype=\"multipart/form-dat
 			$ttktafter =$row['ttktafter'];	
 		        if ($model=="") $mamay=$mavt;else $mamay="$mavt-$model";
 		        
-			$tenthietbisql6 = mysqli_query($link, "SELECT tenvt FROM thietbi_iso WHERE mavt='$mavt' and somay='$somay'") ;
-			while($row = mysqli_fetch_array($tenthietbisql6))
+			$tenthietbisql6 = mysql_query("SELECT tenvt FROM thietbi_iso WHERE mavt='$mavt' and somay='$somay'") ;
+			while($row = mysql_fetch_array($tenthietbisql6))
 			{
 				$tenvt=$row['tenvt'];
 			}
@@ -714,17 +700,17 @@ if(($submit == "nhapdulieu")&&($hoso== "phieusuachua")) {
 		echo '<script>alert("Bạn phải nhập kết luận!"); window.history.back();</script>';
 		exit;
 	}
-$r2 = mysqli_query($link, "SELECT DISTINCT nhom  FROM users where username='$username'");
-		while($row = mysqli_fetch_array($r2))
+$r2 = mysql_query("SELECT DISTINCT nhom  FROM users where username='$username'");
+		while($row = mysql_fetch_array($r2))
 		{
 			$nhom =$row['nhom'];
 		}
 		$maxphieu=0;
 		if ($phanquyen=="1") 
-		$r3 = mysqli_query($link, "SELECT DISTINCT phieu  FROM hososcbd_iso");
+		$r3 = mysql_query("SELECT DISTINCT phieu  FROM hososcbd_iso");
 		else
-		$r3 = mysqli_query($link, "SELECT DISTINCT phieu  FROM hososcbd_iso where nhomsc='$nhom'");
-		while($row = mysqli_fetch_array($r3))
+		$r3 = mysql_query("SELECT DISTINCT phieu  FROM hososcbd_iso where nhomsc='$nhom'");
+		while($row = mysql_fetch_array($r3))
 		{
 			$phieu =$row['phieu'];
 			$phieu=(int)$phieu;
@@ -753,15 +739,15 @@ echo "
 <br/>";
 if ($next=="next") {
 $maql = isset($_POST['maquanly']) ? $_POST['maquanly'] : '';
-		$r5 = mysqli_query($link, "SELECT DISTINCT phieu  FROM hososcbd_iso where maql='$maql'");
-		while($row = mysqli_fetch_array($r5))
+		$r5 = mysql_query("SELECT DISTINCT phieu  FROM hososcbd_iso where maql='$maql'");
+		while($row = mysql_fetch_array($r5))
 		{
 			$fieu =$row['phieu'];
 		}
 }else{
 if ($maxphieu!=0) {
-		$r4 = mysqli_query($link, "SELECT DISTINCT maql  FROM hososcbd_iso where phieu='$fieu'");
-		while($row = mysqli_fetch_array($r4))
+		$r4 = mysql_query("SELECT DISTINCT maql  FROM hososcbd_iso where phieu='$fieu'");
+		while($row = mysql_fetch_array($r4))
 		{
 			$maql =$row['maql'];
 		}
@@ -784,20 +770,20 @@ value=\"$maql\" />
 </tr>
 <tr>
 <td style=\"text-align:left;color:black;font-size: 18;width:300px;padding-left:20px;background-color:#9966CC;\"> <strong>Mã thiết bị (Copy)<input type=\"checkbox\" name=\"copy\" value=\"1\"></strong> </td>";
-$result2 = mysqli_query($link, "SELECT ghichufinal FROM hososcbd_iso WHERE mavt='$mavt' and somay='$somay' and model='$model'") ;
-while($row = mysqli_fetch_array($result2))
+$result2 = mysql_query("SELECT ghichufinal FROM hososcbd_iso WHERE mavt='$mavt' and somay='$somay' and model='$model'") ;
+while($row = mysql_fetch_array($result2))
 				{
 					if($row['ghichufinal']!="")
 					$ghichufinal =$row['ghichufinal'];
 				}
                 if ($phanquyen=="1") {
-			$tenthietbisql1 = mysqli_query($link, "SELECT DISTINCT mavt,somay,hoso,model FROM hososcbd_iso WHERE phieu='$fieu'") ;
+			$tenthietbisql1 = mysql_query("SELECT DISTINCT mavt,somay,hoso,model FROM hososcbd_iso WHERE phieu='$fieu'") ;
 		}
 
 		else {
-		$tenthietbisql1 = mysqli_query($link, "SELECT DISTINCT mavt,somay,hoso,model FROM hososcbd_iso WHERE phieu='$fieu' and ngaykt ='0000-00-00'") ;
-		$tenthietbisql2 = mysqli_query($link, "SELECT DISTINCT mavt,somay,model FROM hososcbd_iso WHERE phieu='$fieu' and ngaykt !='0000-00-00' ") ;
-			while($row = mysqli_fetch_array($tenthietbisql2))
+		$tenthietbisql1 = mysql_query("SELECT DISTINCT mavt,somay,hoso,model FROM hososcbd_iso WHERE phieu='$fieu' and ngaykt ='0000-00-00'") ;
+		$tenthietbisql2 = mysql_query("SELECT DISTINCT mavt,somay,model FROM hososcbd_iso WHERE phieu='$fieu' and ngaykt !='0000-00-00' ") ;
+			while($row = mysql_fetch_array($tenthietbisql2))
 			{
 			$mavt =$row['mavt'];	
 			$somay =$row['somay'];
@@ -809,14 +795,14 @@ while($row = mysqli_fetch_array($result2))
 echo"<td> <select name=\"hosomay\" onchange=\"this.form.submit()\" style=\"border-style:none;width:100%;height:30px;\">
 		<option value=\"all\"></option>";
 		$ck=0;
-		while($row = mysqli_fetch_array($tenthietbisql1))
+		while($row = mysql_fetch_array($tenthietbisql1))
 		{
 			$mavt =$row['mavt'];	
 			$somay =$row['somay'];
 			$model =$row['model'];
 			$hosom =$row['hoso'];
-			$sqlmodel = mysqli_query($link, "SELECT DISTINCT mamay FROM thietbi_iso WHERE mavt='$mavt' and somay='$somay' and model='$model'") ;
-			while($row = mysqli_fetch_array($sqlmodel))
+			$sqlmodel = mysql_query("SELECT DISTINCT mamay FROM thietbi_iso WHERE mavt='$mavt' and somay='$somay' and model='$model'") ;
+			while($row = mysql_fetch_array($sqlmodel))
 			{
 			$mamay =$row['mamay'];
 			}
@@ -1059,8 +1045,8 @@ echo"   <form method=\"post\" action=\"formsc.php\" enctype=\"multipart/form-dat
 	<td>
 	<select name=\"donvi\" onchange=\"this.form.submit()\" style=\"background:#8adaa5;width:100%;height:25px;\"  >
 	        <option value=\"$donvi\">$donvi</option>";
-		$r3 = mysqli_query($link, "SELECT DISTINCT madv,tendv FROM donvi_iso");
-		while($row = mysqli_fetch_array($r3))
+		$r3 = mysql_query("SELECT DISTINCT madv,tendv FROM donvi_iso");
+		while($row = mysql_fetch_array($r3))
 		{
 			$madv =$row['madv'];
 			$tendv = $row['tendv'];
@@ -1108,8 +1094,8 @@ while($i<=5){
 		<option value=\"$thietbi[$i].$model[$i]\">$modelmay</option>
 		<option value=\"\"></option>
 		" ;
-    		$tenthietbisql1 = mysqli_query($link, "SELECT DISTINCT mavt,tenvt,model FROM thietbi_iso where madv='$donvi' order by mavt") ;
-		while($row = mysqli_fetch_array($tenthietbisql1))
+    		$tenthietbisql1 = mysql_query("SELECT DISTINCT mavt,tenvt,model FROM thietbi_iso where madv='$donvi' order by mavt") ;
+		while($row = mysql_fetch_array($tenthietbisql1))
 		{
 			$mavt =$row['mavt'];	
 			$tenvt =$row['tenvt'];
@@ -1126,13 +1112,13 @@ while($i<=5){
 		<option value=\"\"></option>
 		";
 
-		$tenthietbisql2 = mysqli_query($link, "SELECT DISTINCT somay FROM thietbi_iso WHERE mavt='$thietbi[$i]' and model='$model[$i]'") ;
-		while($row = mysqli_fetch_array($tenthietbisql2))
+		$tenthietbisql2 = mysql_query("SELECT DISTINCT somay FROM thietbi_iso WHERE mavt='$thietbi[$i]' and model='$model[$i]'") ;
+		while($row = mysql_fetch_array($tenthietbisql2))
 		{
 			$sm =$row['somay'];
 			if($sm!=$somay[$i]){
-				/*$searchbg = mysqli_query($link, "SELECT bg FROM hososcbd_iso WHERE mavt='$thietbi[$i]' and somay='$sm'") ;
-                                	while($row = mysqli_fetch_array($searchbg))
+				/*$searchbg = mysql_query("SELECT bg FROM hososcbd_iso WHERE mavt='$thietbi[$i]' and somay='$sm'") ;
+                                	while($row = mysql_fetch_array($searchbg))
 					{
 							$bg =$row['bg'];
 					}
@@ -1157,8 +1143,8 @@ while($i<=5){
 		echo"<td>";	
 		echo"<select name=\"vitri$i\"  style=\"border-style:none;width:100%;height:30px;\">
 		<option value=\"$vitri[$i]\">$vitri[$i]</option>" ;
-    		$tenthietbisql1 = mysqli_query($link, "SELECT DISTINCT mavitri,tenvitri FROM vitri_iso") ;
-		while($row = mysqli_fetch_array($tenthietbisql1))
+    		$tenthietbisql1 = mysql_query("SELECT DISTINCT mavitri,tenvitri FROM vitri_iso") ;
+		while($row = mysql_fetch_array($tenthietbisql1))
 		{
 			$mavitri =$row['mavitri'];	
 			$tenvitri =$row['tenvitri'];	
@@ -1201,8 +1187,8 @@ while($i<=5){
 		<tr><td style=\"height:30px;padding-left:50px;width:800px;\"><strong>PHỤC VỤ SẢN XUẤT CHO LÔ: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</strong>
 		<select name=\"lo\"  style=\"border-style:none;width:50%;height:30px;font_family:Times New Roman;background:#8adaa5;height:25px;\">
 		<option value=\"$lo\">$lo</option>";
-		$sqllo = mysqli_query($link, "SELECT DISTINCT malo,tenlo FROM lo_iso") ;
-		while($row = mysqli_fetch_array($sqllo))
+		$sqllo = mysql_query("SELECT DISTINCT malo,tenlo FROM lo_iso") ;
+		while($row = mysql_fetch_array($sqllo))
 		{
 			$malo =$row['malo'];	
 			$tenlo =$row['tenlo'];	
@@ -1214,8 +1200,8 @@ while($i<=5){
 		<tr><td style=\"height:30px;padding-left:50px;width:800px;\"><strong>PHỤC VỤ SẢN XUẤT CHO MỎ :&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </strong>
 		<select name=\"mo\"  style=\"border-style:none;width:50%;height:30px;font_family:Times New Roman;background:#8adaa5;height:25px;\">
 		<option value=\"$mo\">$mo</option>";
-		$sqlmo = mysqli_query($link, "SELECT DISTINCT mamo,tenmo FROM mo_iso") ;
-		while($row = mysqli_fetch_array($sqlmo))
+		$sqlmo = mysql_query("SELECT DISTINCT mamo,tenmo FROM mo_iso") ;
+		while($row = mysql_fetch_array($sqlmo))
 		{
 			$mamo =$row['mamo'];	
 			$tenmo =$row['tenmo'];	
@@ -1339,8 +1325,8 @@ echo"   <form method=\"post\" action=\"formsc.php\" enctype=\"multipart/form-dat
 	<td>
 	<select name=\"donvi\" onchange=\"this.form.submit()\" style=\"background:#8adaa5;width:100%;height:25px;\"  >
 	        <option value=\"$donvi\">$donvi</option>";
-		$r3 = mysqli_query($link, "SELECT DISTINCT madv,tendv FROM donvi_iso");
-		while($row = mysqli_fetch_array($r3))
+		$r3 = mysql_query("SELECT DISTINCT madv,tendv FROM donvi_iso");
+		while($row = mysql_fetch_array($r3))
 		{
 			$madv =$row['madv'];
 			$tendv = $row['tendv'];
@@ -1388,8 +1374,8 @@ while($i<=5+$solan){
 		<select name=\"thietbi$i\" onchange=\"this.form.submit()\" style=\"border-style:none;width:100%;height:30px;\">
 		<option value=\"$thietbi[$i].$model[$i]\">$modelmay</option>
 		" ;
-    		$tenthietbisql1 = mysqli_query($link, "SELECT DISTINCT mavt,tenvt,model FROM thietbi_iso where madv='$donvi' order by mavt") ;
-		while($row = mysqli_fetch_array($tenthietbisql1))
+    		$tenthietbisql1 = mysql_query("SELECT DISTINCT mavt,tenvt,model FROM thietbi_iso where madv='$donvi' order by mavt") ;
+		while($row = mysql_fetch_array($tenthietbisql1))
 		{
 			$mavt =$row['mavt'];	
 			$tenvt =$row['tenvt'];
@@ -1404,13 +1390,13 @@ while($i<=5+$solan){
 		<select name=\"somay$i\" style=\"border-style:none;width:100%;\">
 		<option value=\"$somay[$i]\">$somay[$i] </option>
 		";
-		$tenthietbisql2 = mysqli_query($link, "SELECT DISTINCT somay FROM thietbi_iso WHERE mavt='$thietbi[$i]' and model='$model[$i]'") ;
-		while($row = mysqli_fetch_array($tenthietbisql2))
+		$tenthietbisql2 = mysql_query("SELECT DISTINCT somay FROM thietbi_iso WHERE mavt='$thietbi[$i]' and model='$model[$i]'") ;
+		while($row = mysql_fetch_array($tenthietbisql2))
 		{
 			$sm =$row['somay'];
 			if($sm!=$somay[$i]){	
-				/*$searchbg = mysqli_query($link, "SELECT bg FROM hososcbd_iso WHERE mavt='$thietbi[$i]' and somay='$sm'") ;
-                                	while($row = mysqli_fetch_array($searchbg))
+				/*$searchbg = mysql_query("SELECT bg FROM hososcbd_iso WHERE mavt='$thietbi[$i]' and somay='$sm'") ;
+                                	while($row = mysql_fetch_array($searchbg))
 					{
 							$bg =$row['bg'];
 					}
@@ -1435,8 +1421,8 @@ while($i<=5+$solan){
 		echo"<td>";	
 		echo"<select name=\"vitri$i\"  style=\"border-style:none;width:100%;height:30px;\">
 		<option value=\"$vitri[$i]\">$vitri[$i]</option>" ;
-    		$tenthietbisql1 = mysqli_query($link, "SELECT DISTINCT mavitri,tenvitri FROM vitri_iso") ;
-		while($row = mysqli_fetch_array($tenthietbisql1))
+    		$tenthietbisql1 = mysql_query("SELECT DISTINCT mavitri,tenvitri FROM vitri_iso") ;
+		while($row = mysql_fetch_array($tenthietbisql1))
 		{
 			$mavitri =$row['mavitri'];	
 			$tenvitri =$row['tenvitri'];	
@@ -1481,8 +1467,8 @@ while($i<=5+$solan){
 		<tr><td style=\"height:30px;padding-left:50px;width:800px;\"><strong>PHỤC VỤ SẢN XUẤT CHO LÔ: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</strong>
 		<select name=\"lo\"  style=\"border-style:none;width:50%;height:30px;font_family:Times New Roman;background:#8adaa5;height:25px;\">
 		<option value=\"$lo\">$lo</option>";
-		$sqllo = mysqli_query($link, "SELECT DISTINCT malo,tenlo FROM lo_iso") ;
-		while($row = mysqli_fetch_array($sqllo))
+		$sqllo = mysql_query("SELECT DISTINCT malo,tenlo FROM lo_iso") ;
+		while($row = mysql_fetch_array($sqllo))
 		{
 			$malo =$row['malo'];	
 			$tenlo =$row['tenlo'];	
@@ -1494,8 +1480,8 @@ while($i<=5+$solan){
 		<tr><td style=\"height:30px;padding-left:50px;width:800px;\"><strong>PHỤC VỤ SẢN XUẤT CHO MỎ :&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </strong>
 		<select name=\"mo\"  style=\"border-style:none;width:50%;height:30px;font_family:Times New Roman;background:#8adaa5;height:25px;\">
 		<option value=\"$mo\">$mo</option>";
-		$sqlmo = mysqli_query($link, "SELECT DISTINCT mamo,tenmo FROM mo_iso") ;
-		while($row = mysqli_fetch_array($sqlmo))
+		$sqlmo = mysql_query("SELECT DISTINCT mamo,tenmo FROM mo_iso") ;
+		while($row = mysql_fetch_array($sqlmo))
 		{
 			$mamo =$row['mamo'];	
 			$tenmo =$row['tenmo'];	
@@ -1618,8 +1604,8 @@ echo"   <form method=\"post\" action=\"formsc.php\" enctype=\"multipart/form-dat
 	<td>
 	<select name=\"donvi\" onchange=\"this.form.submit()\" style=\"background:#8adaa5;width:100%;height:25px;\"  >
 	        <option value=\"$donvi\">$donvi</option>";
-		$r3 = mysqli_query($link, "SELECT DISTINCT madv,tendv FROM donvi_iso");
-		while($row = mysqli_fetch_array($r3))
+		$r3 = mysql_query("SELECT DISTINCT madv,tendv FROM donvi_iso");
+		while($row = mysql_fetch_array($r3))
 		{
 			$madv =$row['madv'];
 			$tendv = $row['tendv'];
@@ -1667,8 +1653,8 @@ while($i<=5+$solan){
 		<select name=\"thietbi$i\" onchange=\"this.form.submit()\" style=\"border-style:none;width:100%;height:30px;\">
 		<option value=\"$thietbi[$i].$model[$i]\">$modelmay</option>
 		" ;
-    		$tenthietbisql1 = mysqli_query($link, "SELECT DISTINCT mavt,tenvt,model FROM thietbi_iso where madv='$donvi' order by mavt") ;
-		while($row = mysqli_fetch_array($tenthietbisql1))
+    		$tenthietbisql1 = mysql_query("SELECT DISTINCT mavt,tenvt,model FROM thietbi_iso where madv='$donvi' order by mavt") ;
+		while($row = mysql_fetch_array($tenthietbisql1))
 		{
 			$mavt =$row['mavt'];	
 			$tenvt =$row['tenvt'];
@@ -1683,13 +1669,13 @@ while($i<=5+$solan){
 		<select name=\"somay$i\" style=\"border-style:none;width:100%;\">
 		<option value=\"$somay[$i]\">$somay[$i] </option>
 		";
-		$tenthietbisql2 = mysqli_query($link, "SELECT DISTINCT somay FROM thietbi_iso WHERE mavt='$thietbi[$i]' and model='$model[$i]'") ;
-		while($row = mysqli_fetch_array($tenthietbisql2))
+		$tenthietbisql2 = mysql_query("SELECT DISTINCT somay FROM thietbi_iso WHERE mavt='$thietbi[$i]' and model='$model[$i]'") ;
+		while($row = mysql_fetch_array($tenthietbisql2))
 		{
 			$sm =$row['somay'];
 			if($sm!=$somay[$i]){	
-			/*$searchbg = mysqli_query($link, "SELECT bg FROM hososcbd_iso WHERE mavt='$thietbi[$i]' and somay='$sm'") ;
-                                	while($row = mysqli_fetch_array($searchbg))
+			/*$searchbg = mysql_query("SELECT bg FROM hososcbd_iso WHERE mavt='$thietbi[$i]' and somay='$sm'") ;
+                                	while($row = mysql_fetch_array($searchbg))
 					{
 							$bg =$row['bg'];
 					}
@@ -1714,8 +1700,8 @@ while($i<=5+$solan){
 		echo"<td>";	
 		echo"<select name=\"vitri$i\"  style=\"border-style:none;width:100%;height:30px;\">
 		<option value=\"$vitri[$i]\">$vitri[$i]</option>" ;
-    		$tenthietbisql1 = mysqli_query($link, "SELECT DISTINCT mavitri,tenvitri FROM vitri_iso") ;
-		while($row = mysqli_fetch_array($tenthietbisql1))
+    		$tenthietbisql1 = mysql_query("SELECT DISTINCT mavitri,tenvitri FROM vitri_iso") ;
+		while($row = mysql_fetch_array($tenthietbisql1))
 		{
 			$mavitri =$row['mavitri'];	
 			$tenvitri =$row['tenvitri'];	
@@ -1760,8 +1746,8 @@ while($i<=5+$solan){
 		<tr><td style=\"height:30px;padding-left:50px;width:800px;\"><strong>PHỤC VỤ SẢN XUẤT CHO LÔ: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</strong>
 		<select name=\"lo\"  style=\"border-style:none;width:50%;height:30px;font_family:Times New Roman;background:#8adaa5;height:25px;\">
 		<option value=\"$lo\">$lo</option>";
-		$sqllo = mysqli_query($link, "SELECT DISTINCT malo,tenlo FROM lo_iso") ;
-		while($row = mysqli_fetch_array($sqllo))
+		$sqllo = mysql_query("SELECT DISTINCT malo,tenlo FROM lo_iso") ;
+		while($row = mysql_fetch_array($sqllo))
 		{
 			$malo =$row['malo'];	
 			$tenlo =$row['tenlo'];	
@@ -1773,8 +1759,8 @@ while($i<=5+$solan){
 		<tr><td style=\"height:30px;padding-left:50px;width:800px;\"><strong>PHỤC VỤ SẢN XUẤT CHO MỎ :&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </strong>
 		<select name=\"mo\"  style=\"border-style:none;width:50%;height:30px;font_family:Times New Roman;background:#8adaa5;height:25px;\">
 		<option value=\"$mo\">$mo</option>";
-		$sqlmo = mysqli_query($link, "SELECT DISTINCT mamo,tenmo FROM mo_iso") ;
-		while($row = mysqli_fetch_array($sqlmo))
+		$sqlmo = mysql_query("SELECT DISTINCT mamo,tenmo FROM mo_iso") ;
+		while($row = mysql_fetch_array($sqlmo))
 		{
 			$mamo =$row['mamo'];	
 			$tenmo =$row['tenmo'];	
@@ -1829,8 +1815,8 @@ $xemxetxuong=isset($_POST['xemxetxuong']) ? $_POST['xemxetxuong'] : '';
 $lo=isset($_POST['lo']) ? $_POST['lo'] : '';
 $gieng=isset($_POST['gieng']) ? $_POST['gieng'] : '';
 $mo=isset($_POST['mo']) ? $_POST['mo'] : '';
-$r2 = mysqli_query($link, "SELECT DISTINCT nhom  FROM users where username='$username'");
-	while($row = mysqli_fetch_array($r2))
+$r2 = mysql_query("SELECT DISTINCT nhom  FROM users where username='$username'");
+	while($row = mysql_fetch_array($r2))
 	{
 		$nhom =$row['nhom'];
 	}
@@ -1965,8 +1951,8 @@ $ngaystemp = substr($ngaystemp,$p);
 $r3="SELECT max(stt) as tt FROM hososcbd_iso";
 $result=mysqli_query($con,$r3);
 if(mysqli_num_rows($result)>0){
-$r3=mysqli_query($link, "SELECT max(stt) as tt FROM hososcbd_iso");
-while($row = mysqli_fetch_array($r3))
+$r3=mysql_query("SELECT max(stt) as tt FROM hososcbd_iso");
+while($row = mysql_fetch_array($r3))
 {
 	$recc =$row['tt'];
 }
@@ -1988,8 +1974,8 @@ $shs[$i]=isset($_POST["shs$i"]) ? $_POST["shs$i"] : '';
 $searchbg="SELECT bg FROM hososcbd_iso WHERE mavt='$tb[$i]' and somay='$somay[$i]";
 $result=mysqli_query($con,$searchbg);
 if(mysqli_num_rows($result)>0){
-$searchbg = mysqli_query($link, "SELECT bg FROM hososcbd_iso WHERE mavt='$tb[$i]' and somay='$somay[$i]'") ;
-while($row = mysqli_fetch_array($searchbg))
+$searchbg = mysql_query("SELECT bg FROM hososcbd_iso WHERE mavt='$tb[$i]' and somay='$somay[$i]'") ;
+while($row = mysql_fetch_array($searchbg))
 {
    $bg[$i] =$row['bg'];
 }
@@ -2008,8 +1994,8 @@ $checkhoso=0;
 $r3="SELECT phieu FROM hososcbd_iso";
 $result=mysqli_query($con,$r3);
 if(mysqli_num_rows($result)>0){
-$r3=mysqli_query($link, "SELECT phieu FROM hososcbd_iso");
-while($row = mysqli_fetch_array($r3))
+$r3=mysql_query("SELECT phieu FROM hososcbd_iso");
+while($row = mysql_fetch_array($r3))
 {
 	$hosotemp =$row['phieu'];
 	if ($hosotemp==$sohoso) {
@@ -2024,8 +2010,8 @@ if ($suadl=="suayeucaudichvu") {
 for($i=1;$i<=5+$solan;$i++){
 	if($thietbi[$i]!=NULL){
 	$checkmay=0;	
-	$result2=mysqli_query($link, "SELECT hoso,maql FROM hososcbd_iso where phieu='$sohoso'");
-	while($row = mysqli_fetch_array($result2))
+	$result2=mysql_query("SELECT hoso,maql FROM hososcbd_iso where phieu='$sohoso'");
+	while($row = mysql_fetch_array($result2))
 	{
 		$hoso =$row['hoso'];
 		$maql =$row['maql'];
@@ -2054,7 +2040,7 @@ $update = "update hososcbd_iso SET
 	mo='$mo',
 	model='$model[$i]'
 	where phieu='$sohoso' and hoso='$shs[$i]'";
-mysqli_query($link, $update) or die(mysqli_error($link));
+mysql_query($update) or die(mysql_error());
 	}else {
 //$maquanly="$nams$thangs$ngays-$donvi-$sohoso-N1";
 $insert = "insert into hososcbd_iso(
@@ -2122,7 +2108,7 @@ model
 '$mo',
 '$model[$i]'
 )" ;
-mysqli_query($link, $insert) or die(mysqli_error($link));
+mysql_query($insert) or die(mysql_error());
 $recc++;
 	}
 	}
@@ -2257,7 +2243,7 @@ model
 '$mo',
 '$model[$i]'
 )" ;
-mysqli_query($link, $insert) or die(mysqli_error($link));
+mysql_query($insert) or die(mysql_error());
 $recc++;
 }
 }
@@ -2266,15 +2252,15 @@ $recc++;
 $r3="SELECT max(stt) as tt FROM lichsudn_iso";
 $result=mysqli_query($con,$r3);
 if(mysqli_num_rows($result)>0){
-$r3=mysqli_query($link, "SELECT max(stt) as tt FROM lichsudn_iso");
-while($row = mysqli_fetch_array($r3))
+$r3=mysql_query("SELECT max(stt) as tt FROM lichsudn_iso");
+while($row = mysql_fetch_array($r3))
 {
 	$tt =$row['tt'];
 }
 }else $tt=0;
 $tt++;
-$r4=mysqli_query($link, "SELECT madv  FROM users where username='$username'");
-while($row = mysqli_fetch_array($r4))
+$r4=mysql_query("SELECT madv  FROM users where username='$username'");
+while($row = mysql_fetch_array($r4))
 {
 	$madv =$row['madv'];
 }
@@ -2295,7 +2281,7 @@ maql
 '$ip_address',
 '$maql'
 )" ;
-mysqli_query($link, $insert) or die(mysqli_error($link));
+mysql_query($insert) or die(mysql_error());
 echo"
 <html lang=\"vi\">
 <head>
@@ -2358,8 +2344,8 @@ $i =1 ;
 $stt=1;
 while($i<=5+$solan){
 	if($thietbi[$i]!=""){
-		/*$tenthietbisql2 = mysqli_query($link, "SELECT tenvt FROM thietbi_iso WHERE mavt='$thietbi[$i]' ") ;
-		while($row = mysqli_fetch_array($tenthietbisql2))
+		/*$tenthietbisql2 = mysql_query("SELECT tenvt FROM thietbi_iso WHERE mavt='$thietbi[$i]' ") ;
+		while($row = mysql_fetch_array($tenthietbisql2))
 		{
 			$tenvt[$i] =$row['tenvt'];
 		}
@@ -3316,23 +3302,23 @@ if($submit == "CÓ")
 	$total=isset($_POST['total']) ? $_POST['total'] : '';
 	for($i=1;$i<$total;$i++){
 		$hoso=isset($_POST["hoso$i"]) ? $_POST["hoso$i"] : '';
-		$r5=mysqli_query($link, "SELECT maql  FROM hososcbd_iso where hoso='$hoso'");
-		while($row = mysqli_fetch_array($r5))
+		$r5=mysql_query("SELECT maql  FROM hososcbd_iso where hoso='$hoso'");
+		while($row = mysql_fetch_array($r5))
 		{
 			$maquanly =$row['maql'];
 		}
 		// Delete data from hososcbd
 		$delete = " DELETE FROM hososcbd_iso WHERE hoso = '$hoso'" ;
-		$result = mysqli_query($link, "$delete") or die(mysqli_error($link));
+		$result = mysql_query("$delete") or die(mysql_error());
 		// Delete data from bangsolieu
 		$delete = " DELETE FROM bangsolieu_iso WHERE sohoso = '$hoso'" ;
-		$result = mysqli_query($link, "$delete") or die(mysqli_error($link));
+		$result = mysql_query("$delete") or die(mysql_error());
 		// Delete data from danhmucvattu
 		$delete = " DELETE FROM danhmucvattu_iso WHERE mahoso = '$hoso'" ;
-		$result = mysqli_query($link, "$delete") or die(mysqli_error($link));
+		$result = mysql_query("$delete") or die(mysql_error());
 		// Delete data from nguoi thuc hien
 		$delete = " DELETE FROM ngthuchien_iso WHERE mahoso = '$hoso'" ;
-		$result = mysqli_query($link, "$delete") or die(mysqli_error($link));
+		$result = mysql_query("$delete") or die(mysql_error());
 
 		echo"Đã xóa hồ sơ máy số:$hoso </br>";
 	}
@@ -3342,15 +3328,15 @@ $curdate=date("Y-m-d H:i:s");
 $r3="SELECT max(stt) as tt FROM lichsudn_iso";
 $result=mysqli_query($con,$r3);
 if(mysqli_num_rows($result)>0){
-$r3=mysqli_query($link, "SELECT max(stt) as tt FROM lichsudn_iso");
-while($row = mysqli_fetch_array($r3))
+$r3=mysql_query("SELECT max(stt) as tt FROM lichsudn_iso");
+while($row = mysql_fetch_array($r3))
 {
 	$tt =$row['tt'];
 }
 }else $tt=0;
 $tt++;
-$r4=mysqli_query($link, "SELECT madv,nhom  FROM users where username='$username'");
-while($row = mysqli_fetch_array($r4))
+$r4=mysql_query("SELECT madv,nhom  FROM users where username='$username'");
+while($row = mysql_fetch_array($r4))
 {
 	$madv =$row['madv'];
 	$nhom =$row['nhom'];
@@ -3372,11 +3358,11 @@ maql
 '$ip_address',
 '$maquanly'
 )" ;
-mysqli_query($link, $insert) or die(mysqli_error($link));
+mysql_query($insert) or die(mysql_error());
 // Reset sohoso sau khi xoa.
-$r6=mysqli_query($link, "SELECT phieu,hoso  FROM hososcbd_iso where maql='$maquanly'");
+$r6=mysql_query("SELECT phieu,hoso  FROM hososcbd_iso where maql='$maquanly'");
 $i=1;
-		while($row = mysqli_fetch_array($r6))
+		while($row = mysql_fetch_array($r6))
 		{
 			$rhoso =$row['hoso'];
 			$phieu =$row['phieu'];
@@ -3385,22 +3371,22 @@ $i=1;
 			$update = "update hososcbd_iso SET  
 			hoso='$nhoso'
 			WHERE hoso='$rhoso'" ;
-			mysqli_query($link, $update) or die(mysqli_error($link));
+			mysql_query($update) or die(mysql_error());
 			//bangsolieu
 			$update = "update bangsolieu_iso SET  
 			sohoso='$nhoso'
 			WHERE sohoso='$rhoso'" ;
-			mysqli_query($link, $update) or die(mysqli_error($link));
+			mysql_query($update) or die(mysql_error());
 			//danhmucvattu
 			$update = "update danhmucvattu_iso SET  
 			mahoso='$nhoso'
 			WHERE mahoso='$rhoso'" ;
-			mysqli_query($link, $update) or die(mysqli_error($link));
+			mysql_query($update) or die(mysql_error());
 			//nguoithuchien
 			$update = "update ngthuchien_iso SET  
 			mahoso='$nhoso'
 			WHERE mahoso='$rhoso'" ;
-			mysqli_query($link, $update) or die(mysqli_error($link));
+			mysql_query($update) or die(mysql_error());
 			$i++;
 		}
 
@@ -3446,8 +3432,8 @@ echo "
 
 if(($search!="")&&($xuat=="")&&($hoso=="bienbanscbd"))
 {
-$tenthietbisql4 = mysqli_query($link, "SELECT * FROM hososcbd_iso WHERE phieu='$search'") ;
-while($row = mysqli_fetch_array($tenthietbisql4))
+$tenthietbisql4 = mysql_query("SELECT * FROM hososcbd_iso WHERE phieu='$search'") ;
+while($row = mysql_fetch_array($tenthietbisql4))
 {
 		$maquanly =$row['maql'];
 		$ngay = $row['ngayyc'];
@@ -3542,8 +3528,8 @@ echo"   <form action=\"formsc.php\" method=\"post\" name=\"example\">
 	</tr>";
 	$i=1;
 	$k=1;
-		$tenthietbisql1 = mysqli_query($link, "SELECT * FROM hososcbd_iso WHERE phieu='$search'") ;
-		while($row = mysqli_fetch_array($tenthietbisql1))
+		$tenthietbisql1 = mysql_query("SELECT * FROM hososcbd_iso WHERE phieu='$search'") ;
+		while($row = mysql_fetch_array($tenthietbisql1))
 		{
 			$mavt =$row['mavt'];
 			$bg =$row['bg'];
@@ -3555,8 +3541,8 @@ echo"   <form action=\"formsc.php\" method=\"post\" name=\"example\">
 			$ttktafter =$row['ttktafter'];
 			if ($model=="") $mamay=$mavt;else $mamay="$mavt-$model";
 			
-			$tenthietbisql6 = mysqli_query($link, "SELECT * FROM thietbi_iso WHERE mavt='$mavt' and somay='$somay' and model='$model' ") ;
-			while($row = mysqli_fetch_array($tenthietbisql6))
+			$tenthietbisql6 = mysql_query("SELECT * FROM thietbi_iso WHERE mavt='$mavt' and somay='$somay' and model='$model' ") ;
+			while($row = mysql_fetch_array($tenthietbisql6))
 			{
 				$tenvt=$row['tenvt'];
 			}
@@ -3650,8 +3636,8 @@ $ngay=isset($_POST['ngay']) ? $_POST['ngay'] : '';
 $khachhang=isset($_POST['khachhang']) ? $_POST['khachhang'] : '';
 $nhanvien=isset($_POST['nhanvien']) ? $_POST['nhanvien'] : '';
 $donvi=isset($_POST['donvi']) ? $_POST['donvi'] : '';
-$tenthietbisql5 = mysqli_query($link, "SELECT COUNT(*) as number FROM hososcbd_iso WHERE maql='$maquanly'") ;
-while($row = mysqli_fetch_array($tenthietbisql5))
+$tenthietbisql5 = mysql_query("SELECT COUNT(*) as number FROM hososcbd_iso WHERE maql='$maquanly'") ;
+while($row = mysql_fetch_array($tenthietbisql5))
 {
 		$number =$row['number'];
 }
@@ -3713,8 +3699,8 @@ $k=1;
 		// while($i<=$number)
 //{     
 			$slbg=0;
-			$tenthietbisql = mysqli_query($link, "SELECT slbg FROM hososcbd_iso WHERE maql='$maquanly'") ;
-			while($row = mysqli_fetch_array($tenthietbisql))
+			$tenthietbisql = mysql_query("SELECT slbg FROM hososcbd_iso WHERE maql='$maquanly'") ;
+			while($row = mysql_fetch_array($tenthietbisql))
 			{
 				$slbg =$row['slbg'];
 			}
@@ -3722,19 +3708,19 @@ $k=1;
 				$update1 = "update hososcbd_iso SET
 					slbg='$slbg'
 				where maql='$maquanly'";
-				mysqli_query($link, $update1) or die(mysqli_error($link));
+				mysql_query($update1) or die(mysql_error());
 
-			 $tenthietbisql5 = mysqli_query($link, "SELECT hoso FROM hososcbd_iso WHERE maql='$maquanly'") ;
-			while($row = mysqli_fetch_array($tenthietbisql5))
+			 $tenthietbisql5 = mysql_query("SELECT hoso FROM hososcbd_iso WHERE maql='$maquanly'") ;
+			while($row = mysql_fetch_array($tenthietbisql5))
 			{
 					$hoso =$row['hoso'];
 			if($bg[$i]!=""){
 				$update = "update hososcbd_iso SET
 					bg='1'
 				where hoso='$bg[$i]'";
-				mysqli_query($link, $update) or die(mysqli_error($link));
-				$tenthietbisql1 = mysqli_query($link, "SELECT * FROM hososcbd_iso WHERE hoso='$bg[$i]'") ;
-			while($row = mysqli_fetch_array($tenthietbisql1))
+				mysql_query($update) or die(mysql_error());
+				$tenthietbisql1 = mysql_query("SELECT * FROM hososcbd_iso WHERE hoso='$bg[$i]'") ;
+			while($row = mysql_fetch_array($tenthietbisql1))
 			{
 				$somay =$row['somay'];
 				$mavt =$row['mavt'];
@@ -3743,8 +3729,8 @@ $k=1;
 				$ttktafter =$row['ttktafter'];	
 			}
 			if ($model=="") $modelmay=$mavt;else $modelmay="$mavt-$model";
-			$tenthietbisql6 = mysqli_query($link, "SELECT * FROM thietbi_iso WHERE mavt='$mavt' and somay='$somay' and model='$model' ") ;
-			while($row = mysqli_fetch_array($tenthietbisql6))
+			$tenthietbisql6 = mysql_query("SELECT * FROM thietbi_iso WHERE mavt='$mavt' and somay='$somay' and model='$model' ") ;
+			while($row = mysql_fetch_array($tenthietbisql6))
 			{
 				$tenvt=$row['tenvt'];
 			}
@@ -3761,7 +3747,7 @@ $k=1;
 				$update = "update hososcbd_iso SET
 				bg='0'
 				where hoso='$hoso'";
-				mysqli_query($link, $update) or die(mysqli_error($link));
+				mysql_query($update) or die(mysql_error());
 				}
 			 }
 			$i++;
@@ -3772,15 +3758,15 @@ $curdate=date("Y-m-d H:i:s");
 $r3="SELECT max(stt) as tt FROM lichsudn_iso";
 $result=mysqli_query($con,$r3);
 if(mysqli_num_rows($result)>0){
-$r3=mysqli_query($link, "SELECT max(stt) as tt FROM lichsudn_iso");
-while($row = mysqli_fetch_array($r3))
+$r3=mysql_query("SELECT max(stt) as tt FROM lichsudn_iso");
+while($row = mysql_fetch_array($r3))
 {
 	$tt =$row['tt'];
 }
 }else $tt=0;
 $tt++;
-$r4=mysqli_query($link, "SELECT madv,nhom  FROM users where username='$username'");
-while($row = mysqli_fetch_array($r4))
+$r4=mysql_query("SELECT madv,nhom  FROM users where username='$username'");
+while($row = mysql_fetch_array($r4))
 {
 	$madv =$row['madv'];
 	$nhom =$row['nhom'];
@@ -3802,7 +3788,7 @@ maql
 '$ip_address',
 '$maquanly'
 )" ;
-mysqli_query($link, $insert) or die(mysqli_error($link));
+mysql_query($insert) or die(mysql_error());
 echo"</table></br>";
 echo" <table align=\"center\">
 <tr><td>
@@ -3841,8 +3827,8 @@ $khachhang=isset($_POST['khachhang']) ? $_POST['khachhang'] : '';
 $nhanvien=isset($_POST['nhanvien']) ? $_POST['nhanvien'] : '';
 $donvi=isset($_POST['donvi']) ? $_POST['donvi'] : '';
 if(($donvi=="TH")||($donvi=="CNC")) $donvi="DVLTH" ;
-$tenthietbisql5 = mysqli_query($link, "SELECT COUNT(*) as number FROM hososcbd_iso WHERE maql='$maquanly'") ;
-while($row = mysqli_fetch_array($tenthietbisql5))
+$tenthietbisql5 = mysql_query("SELECT COUNT(*) as number FROM hososcbd_iso WHERE maql='$maquanly'") ;
+while($row = mysql_fetch_array($tenthietbisql5))
 {
 		$number =$row['number'];
 }
@@ -3853,8 +3839,8 @@ for($i=1;$i<=$number;$i++){
 }
 if (($check==0)&&($username!='admin')) {
 $j=1;
-$tenthietbisql4 = mysqli_query($link, "SELECT hoso  FROM hososcbd_iso WHERE maql='$maquanly' and bg='1'") ;
-while($row = mysqli_fetch_array($tenthietbisql4))
+$tenthietbisql4 = mysql_query("SELECT hoso  FROM hososcbd_iso WHERE maql='$maquanly' and bg='1'") ;
+while($row = mysql_fetch_array($tenthietbisql4))
 {
 	$bg[$j] =$row['hoso'];
 	$j++;
@@ -5338,8 +5324,8 @@ mso-themecolor:text1;mso-ansi-language:VI'><o:p>&nbsp;</o:p></span></p>
 		 {
 			if($bg[$i]!=""){
 			
-			$tenthietbisql1 = mysqli_query($link, "SELECT * FROM hososcbd_iso WHERE hoso='$bg[$i]'") ;
-			while($row = mysqli_fetch_array($tenthietbisql1))
+			$tenthietbisql1 = mysql_query("SELECT * FROM hososcbd_iso WHERE hoso='$bg[$i]'") ;
+			while($row = mysql_fetch_array($tenthietbisql1))
 			{
 				$somay =$row['somay'];
 				$mavt =$row['mavt'];
@@ -5536,20 +5522,20 @@ value=\"$search\" />
 </tr>
 <tr>
 <td style=\"text-align:left;color:black;font-size:18;width:300px;padding-left:20px;background-color:#9966CC;\"> <strong>Mã thiết bị  (Copy)<input type=\"checkbox\" name=\"copy\" value=\"1\"></strong> </td>";
-$result2 = mysqli_query($link, "SELECT ghichufinal FROM hososcbd_iso WHERE mavt='$mavt' and somay='$somay' and model='$model'") ;
-while($row = mysqli_fetch_array($result2))
+$result2 = mysql_query("SELECT ghichufinal FROM hososcbd_iso WHERE mavt='$mavt' and somay='$somay' and model='$model'") ;
+while($row = mysql_fetch_array($result2))
 				{
 					if($row['ghichufinal']!="")
 					$ghichufinal =$row['ghichufinal'];
 				}
 if ($phanquyen=="1") {
-			$tenthietbisql1 = mysqli_query($link, "SELECT DISTINCT mavt,somay,hoso,model FROM hososcbd_iso WHERE maql='$search'") ;
+			$tenthietbisql1 = mysql_query("SELECT DISTINCT mavt,somay,hoso,model FROM hososcbd_iso WHERE maql='$search'") ;
 		}
 
 		else {
-		$tenthietbisql1 = mysqli_query($link, "SELECT DISTINCT mavt,somay,hoso,model FROM hososcbd_iso WHERE maql='$search' and ngaykt ='0000-00-00'") ;
-		$tenthietbisql2 = mysqli_query($link, "SELECT DISTINCT mavt,somay,model FROM hososcbd_iso WHERE maql='$search' and ngaykt !='0000-00-00' ") ;
-			while($row = mysqli_fetch_array($tenthietbisql2))
+		$tenthietbisql1 = mysql_query("SELECT DISTINCT mavt,somay,hoso,model FROM hososcbd_iso WHERE maql='$search' and ngaykt ='0000-00-00'") ;
+		$tenthietbisql2 = mysql_query("SELECT DISTINCT mavt,somay,model FROM hososcbd_iso WHERE maql='$search' and ngaykt !='0000-00-00' ") ;
+			while($row = mysql_fetch_array($tenthietbisql2))
 			{
 			$mavt =$row['mavt'];	
 			$somay =$row['somay'];
@@ -5561,14 +5547,14 @@ if ($phanquyen=="1") {
 echo"<td> <select name=\"hosomay\" onchange=\"this.form.submit()\" style=\"border-style:none;width:100%;height:30px;\">
 		<option value=\"all\"></option>";
 		$ck=0;
-		while($row = mysqli_fetch_array($tenthietbisql1))
+		while($row = mysql_fetch_array($tenthietbisql1))
 		{
 			$mavt =$row['mavt'];	
 			$somay =$row['somay'];
 			$model =$row['model'];
 			$hosom =$row['hoso'];
-			$sqlmodel = mysqli_query($link, "SELECT DISTINCT mamay FROM thietbi_iso WHERE mavt='$mavt' and somay='$somay' and model='$model'") ;
-			while($row = mysqli_fetch_array($sqlmodel))
+			$sqlmodel = mysql_query("SELECT DISTINCT mamay FROM thietbi_iso WHERE mavt='$mavt' and somay='$somay' and model='$model'") ;
+			while($row = mysql_fetch_array($sqlmodel))
 			{
 			$mamay =$row['mamay'];
 			}
@@ -5732,18 +5718,18 @@ if(($hosomay!="")&&($chonthietbi=="")&&($addvt=="")&&($xuatphieu=="")&&($savefil
 {
 $maql=isset($_POST['maql']) ? $_POST['maql'] : '';
 $copy=isset($_POST['copy']) ? $_POST['copy'] : '';
-	$sql = mysqli_query($link, "SELECT mavt,somay,model,ngayth FROM hososcbd_iso WHERE hoso ='$hosomay'") ;
-	while($row = mysqli_fetch_array($sql))
+	$sql = mysql_query("SELECT mavt,somay,model,ngayth FROM hososcbd_iso WHERE hoso ='$hosomay'") ;
+	while($row = mysql_fetch_array($sql))
 	{
 	$mavt_new=$row['mavt'];
 	$somay_new=$row['somay'];
 	$model_new=$row['model'];
 	$ngayth_new=$row['ngayth'];
 	}
-	$sql1 = mysqli_query($link, "SELECT hoso,ngayth,mavt FROM hososcbd_iso WHERE maql='$maql' and hoso !='$hosomay'") ;
+	$sql1 = mysql_query("SELECT hoso,ngayth,mavt FROM hososcbd_iso WHERE maql='$maql' and hoso !='$hosomay'") ;
 	$kt=0;
 	$hoso_old="";
-while($row = mysqli_fetch_array($sql1))
+while($row = mysql_fetch_array($sql1))
 {
 
 	$ngayth_old =$row['ngayth'];
@@ -5758,8 +5744,8 @@ while($row = mysqli_fetch_array($sql1))
 }
 $hoso_new=$hosomay;
 if (($kt==1)&&($copy==1)) $hosomay=$hoso_old;
-	$tenthietbisql9 = mysqli_query($link, "SELECT * FROM hososcbd_iso WHERE maql='$maql' and hoso='$hosomay'") ;
-while($row = mysqli_fetch_array($tenthietbisql9))
+	$tenthietbisql9 = mysql_query("SELECT * FROM hososcbd_iso WHERE maql='$maql' and hoso='$hosomay'") ;
+while($row = mysql_fetch_array($tenthietbisql9))
 {
 
 	$ngayth =$row['ngayth'];	
@@ -5880,14 +5866,14 @@ $ngaystemp = substr($ngaystemp,$p);
 }
 }
 $check=0;
-$tenthietbisql12 = mysqli_query($link, "SELECT mahoso FROM danhmucvattu_iso") ;
-while($row = mysqli_fetch_array($tenthietbisql12))
+$tenthietbisql12 = mysql_query("SELECT mahoso FROM danhmucvattu_iso") ;
+while($row = mysql_fetch_array($tenthietbisql12))
 {
 	$mahoso =$row['mahoso'];
 	if($mahoso==$hosomay)	$check=1;
 }
-$tenthietbisql13 = mysqli_query($link, "SELECT mamay,homay,dienap FROM thietbi_iso where mavt='$mavt_new' and somay='$somay_new' and model='$model_new'") ;
-while($row = mysqli_fetch_array($tenthietbisql13))
+$tenthietbisql13 = mysql_query("SELECT mamay,homay,dienap FROM thietbi_iso where mavt='$mavt_new' and somay='$somay_new' and model='$model_new'") ;
+while($row = mysql_fetch_array($tenthietbisql13))
 {
 	$mamay=$row['mamay'];
 	$homay=$row['homay'];
@@ -5936,25 +5922,25 @@ value=\"$maql\" />
 <td style=\"text-align:left;color:black;font-size: 18;width:300px;padding-left:20px;background-color:#9966CC;\"> <strong>Mã thiết bị</strong> </td>
 <td> <select name=\"hosomay\" onchange=\"this.form.submit()\" style=\"border-style:none;width:100%;height:30px;\">";
 echo"<option value=\"$hoso_new\">$mamay</option>";
-$result2 = mysqli_query($link, "SELECT ghichufinal FROM hososcbd_iso WHERE mavt='$mavt' and somay='$somay' and model='$model'") ;
-while($row = mysqli_fetch_array($result2))
+$result2 = mysql_query("SELECT ghichufinal FROM hososcbd_iso WHERE mavt='$mavt' and somay='$somay' and model='$model'") ;
+while($row = mysql_fetch_array($result2))
 				{
 					if($row['ghichufinal']!="")
 					$ghichufinal =$row['ghichufinal'];
 				}
                 if ($phanquyen=="1")
-		$tenthietbisql1 = mysqli_query($link, "SELECT DISTINCT mavt,somay,hoso,model FROM hososcbd_iso WHERE phieu='$fieu'") ;
+		$tenthietbisql1 = mysql_query("SELECT DISTINCT mavt,somay,hoso,model FROM hososcbd_iso WHERE phieu='$fieu'") ;
 		else
-		$tenthietbisql1 = mysqli_query($link, "SELECT DISTINCT mavt,somay,hoso,model FROM hososcbd_iso WHERE phieu='$fieu' and ngaykt ='0000-00-00'") ;
+		$tenthietbisql1 = mysql_query("SELECT DISTINCT mavt,somay,hoso,model FROM hososcbd_iso WHERE phieu='$fieu' and ngaykt ='0000-00-00'") ;
 		$ck=0;
-		while($row = mysqli_fetch_array($tenthietbisql1))
+		while($row = mysql_fetch_array($tenthietbisql1))
 		{
 			$mavt =$row['mavt'];	
 			$somayt =$row['somay'];
 			$hosom =$row['hoso'];
 			$modelt =$row['model'];
-			$sqlmodel = mysqli_query($link, "SELECT DISTINCT mamay FROM thietbi_iso WHERE mavt='$mavt' and somay='$somayt' and model='$modelt'") ;
-			while($row = mysqli_fetch_array($sqlmodel))
+			$sqlmodel = mysql_query("SELECT DISTINCT mamay FROM thietbi_iso WHERE mavt='$mavt' and somay='$somayt' and model='$modelt'") ;
+			while($row = mysql_fetch_array($sqlmodel))
 			{
 			$mamay =$row['mamay'];
 			}
@@ -6015,9 +6001,9 @@ for ($k=1;$k<=8;$k++) {
 	$hoten[$k]="";
 	$gio[$k]="";
 }
-$ngthsql = mysqli_query($link, "SELECT hoten,giolv FROM ngthuchien_iso WHERE mahoso='$hosomay' ORDER BY stt ASC") ;
+$ngthsql = mysql_query("SELECT hoten,giolv FROM ngthuchien_iso WHERE mahoso='$hosomay' ORDER BY stt ASC") ;
 $j=1;
-while($row = mysqli_fetch_array($ngthsql))
+while($row = mysql_fetch_array($ngthsql))
 {
 	$hoten[$j]=$row['hoten'];
 	$gio[$j]=$row['giolv'];
@@ -6032,8 +6018,8 @@ echo"<tr>
 <td><select name=\"hoten$i\" style=\"border-style:none;width:100%;height:30px;\"\">
 <option value=\"$hoten[$i]\">$hoten[$i]</option>
 <option value=\"\"></option>";
-		$hotensql10 = mysqli_query($link, "SELECT hoten FROM resume where donvi like'%$donvi%' and nghiviec !='yes'") ;
-		while($row = mysqli_fetch_array($hotensql10))
+		$hotensql10 = mysql_query("SELECT hoten FROM resume where donvi like'%$donvi%' and nghiviec !='yes'") ;
+		while($row = mysql_fetch_array($hotensql10))
 		{
 			$hotennv =$row['hoten'];	
 			echo "<option value=\"$hotennv\" style=\"background:#87CEEB;\"> $hotennv </option>";
@@ -6060,13 +6046,13 @@ echo"<tr>
 <td><select name=\"thietbihotro$i\" style=\"border-style:none;width:100%;height:30px;\" onchange=\"this.form.submit()\">
 <option value=\"$tbdosc[$i]\">$tbdosc[$i]</option>
 <option value=\"\"></option>";
-		$tenthietbisql10 = mysqli_query($link, "SELECT DISTINCT tenthietbi FROM thietbihotro_iso where thly='0'") ;
-		while($row = mysqli_fetch_array($tenthietbisql10))
+		$tenthietbisql10 = mysql_query("SELECT DISTINCT tenthietbi FROM thietbihotro_iso where thly='0'") ;
+		while($row = mysql_fetch_array($tenthietbisql10))
 		{
 			$tentb =$row['tenthietbi'];	
-			$tenthietbisql11 = mysqli_query($link, "SELECT chusohuu FROM thietbihotro_iso where tenthietbi='$tentb' and thly='0'") ;
+			$tenthietbisql11 = mysql_query("SELECT chusohuu FROM thietbihotro_iso where tenthietbi='$tentb' and thly='0'") ;
 			$sh="";
-	         	while($row = mysqli_fetch_array($tenthietbisql11))
+	         	while($row = mysql_fetch_array($tenthietbisql11))
 			{
 				$chusohuu=$row['chusohuu'];
 				$ar=explode(" ",$chusohuu);
@@ -6105,8 +6091,8 @@ echo"
 </tr>";
 $i=1;
 if($check==1){
-$tenthietbisql15 = mysqli_query($link, "SELECT * FROM danhmucvattu_iso WHERE mahoso='$hosomay'") ;
-while($row = mysqli_fetch_array($tenthietbisql15))
+$tenthietbisql15 = mysql_query("SELECT * FROM danhmucvattu_iso WHERE mahoso='$hosomay'") ;
+while($row = mysql_fetch_array($tenthietbisql15))
 {
 	$malinhkien1 = $row['mavattu'];
 	$mota1 =$row['mota'];
@@ -6118,8 +6104,8 @@ while($row = mysqli_fetch_array($tenthietbisql15))
 	<td><select name=\"mlkien$i\">
 	<option value=\"$malinhkien1\">$malinhkien1</option>
 	";
-$tenthietbisql10 = mysqli_query($link, "SELECT DISTINCT mavattu FROM danhmucvattu_iso") ;
-		while($row = mysqli_fetch_array($tenthietbisql10))
+$tenthietbisql10 = mysql_query("SELECT DISTINCT mavattu FROM danhmucvattu_iso") ;
+		while($row = mysql_fetch_array($tenthietbisql10))
 		{
 			$malinhkien =$row['mavattu'];	
 			echo "<option value=\"$malinhkien\" style=\"background:#87CEEB;\"> $malinhkien </option>";
@@ -6139,8 +6125,8 @@ $tenthietbisql10 = mysqli_query($link, "SELECT DISTINCT mavattu FROM danhmucvatt
 	<td><center> $j </center> </td>
 	<td><select name=\"mlkien$j\">
 	<option value=\"other\">Nhập mới</option>";
-$tenthietbisql10 = mysqli_query($link, "SELECT DISTINCT mavattu FROM danhmucvattu_iso") ;
-		while($row = mysqli_fetch_array($tenthietbisql10))
+$tenthietbisql10 = mysql_query("SELECT DISTINCT mavattu FROM danhmucvattu_iso") ;
+		while($row = mysql_fetch_array($tenthietbisql10))
 		{
 			$malinhkien =$row['mavattu'];	
 			echo "<option value=\"$malinhkien\" style=\"background:#87CEEB;\"> $malinhkien </option>";
@@ -6223,9 +6209,9 @@ for ($i=1;$i<=10;$i++) {
 	$linktailieu[$i] ="";
 }
 $check1=0;
-$tenthietbisql22 = mysqli_query($link, "SELECT * FROM bangsolieu_iso ") ;
+$tenthietbisql22 = mysql_query("SELECT * FROM bangsolieu_iso ") ;
 $j=1;
-while($row = mysqli_fetch_array($tenthietbisql22))
+while($row = mysql_fetch_array($tenthietbisql22))
 {
 	$sohoso =$row['sohoso'];
 	if($sohoso==$hosomay)	{
@@ -6337,8 +6323,8 @@ $ketluan=isset($_POST['ketluan']) ? $_POST['ketluan'] : '';
 $ghichufinal=isset($_POST['ghichufinal']) ? $_POST['ghichufinal'] : '';
 
 
-$tenthietbisql10 = mysqli_query($link, "SELECT max(stt) as stt FROM danhmucvattu_iso") ;
-while($row = mysqli_fetch_array($tenthietbisql10))
+$tenthietbisql10 = mysql_query("SELECT max(stt) as stt FROM danhmucvattu_iso") ;
+while($row = mysql_fetch_array($tenthietbisql10))
 {
 	$recc =$row['stt'];
 }
@@ -6443,15 +6429,15 @@ $p++ ;
 $ngaystemp = substr($ngaystemp,$p);
 }
 }
-$tenthietbisql10 = mysqli_query($link, "SELECT somay,mavt,model FROM hososcbd_iso WHERE maql='$maql' and hoso='$hosomay'") ;
-while($row = mysqli_fetch_array($tenthietbisql10))
+$tenthietbisql10 = mysql_query("SELECT somay,mavt,model FROM hososcbd_iso WHERE maql='$maql' and hoso='$hosomay'") ;
+while($row = mysql_fetch_array($tenthietbisql10))
 {
 	$somay =$row['somay'];
 	$mavt =$row['mavt'];
 	$model =$row['model'];
 }
-$tenthietbisql13 = mysqli_query($link, "SELECT mamay,homay,dienap FROM thietbi_iso where mavt='$mavt' and somay='$somay' and model='$model'") ;
-while($row = mysqli_fetch_array($tenthietbisql13))
+$tenthietbisql13 = mysql_query("SELECT mamay,homay,dienap FROM thietbi_iso where mavt='$mavt' and somay='$somay' and model='$model'") ;
+while($row = mysql_fetch_array($tenthietbisql13))
 {
 	$homay=$row['homay'];
 	$mamay=$row['mamay'];
@@ -6459,15 +6445,15 @@ while($row = mysqli_fetch_array($tenthietbisql13))
 }
 // cap nhat thong tin phieu kiem tra sua chua
 $in_sql="SELECT `bdtime` FROM `thietbi_iso` where mavt='$mavt' and somay='$somay' and model='$model'";
-	$in_result=mysqli_query($link, $in_sql);
-	while($row = mysqli_fetch_array($in_result))
+	$in_result=mysql_query($in_sql);
+	while($row = mysql_fetch_array($in_result))
 	{
 		 $bdtime =$row['bdtime'];
 
 	}
 $yc_sql="SELECT `ngayyc` FROM `hososcbd_iso` WHERE maql='$maql' and hoso='$hosomay'";
-	$in_result=mysqli_query($link, $yc_sql);
-	while($row = mysqli_fetch_array($in_result))
+	$in_result=mysql_query($yc_sql);
+	while($row = mysql_fetch_array($in_result))
 	{
 		 $ngayyc =$row['ngayyc'];
 
@@ -6498,16 +6484,16 @@ $ip_address= $_SERVER['REMOTE_ADDR'];
 $r3="SELECT max(stt) as tt FROM lichsudn_iso";
 $result=mysqli_query($con,$r3);
 if(mysqli_num_rows($result)>0){
-$r3=mysqli_query($link, "SELECT max(stt) as tt FROM lichsudn_iso");
-while($row = mysqli_fetch_array($r3))
+$r3=mysql_query("SELECT max(stt) as tt FROM lichsudn_iso");
+while($row = mysql_fetch_array($r3))
 {
 	$tt =$row['tt'];
 }
 }else $tt=0;
 $tt++;
 //$madv="XDT";
-$r4=mysqli_query($link, "SELECT madv  FROM users where username='$username'");
-while($row = mysqli_fetch_array($r4))
+$r4=mysql_query("SELECT madv  FROM users where username='$username'");
+while($row = mysql_fetch_array($r4))
 {
 	$madv =$row['madv'];
 }
@@ -6528,7 +6514,7 @@ maql
 '$ip_address',
 '$maql'
 )" ;
-mysqli_query($link, $insert) or die(mysqli_error($link));
+mysql_query($insert) or die(mysql_error());
 $update = "update hososcbd_iso SET  
 ngayth= '$nams-$thangs-$ngays',
 ngaykt= '$namt-$thangt-$ngayt',
@@ -6556,11 +6542,11 @@ ketluan='$ketluan',
 ghichufinal='$ghichufinal',
 ngaybdtt='$ngaybdtt'
 WHERE maql='$maql' and hoso='$hosomay'" ;
-mysqli_query($link, $update) or die(mysqli_error($link));
+mysql_query($update) or die(mysql_error());
 $check=0;
 $i=0;
-$tenthietbisql12 = mysqli_query($link, "SELECT mahoso FROM danhmucvattu_iso") ;
-while($row = mysqli_fetch_array($tenthietbisql12))
+$tenthietbisql12 = mysql_query("SELECT mahoso FROM danhmucvattu_iso") ;
+while($row = mysql_fetch_array($tenthietbisql12))
 {
 	$mahoso =$row['mahoso'];
 	if($mahoso==$hosomay)	{
@@ -6603,13 +6589,13 @@ for($i=1;$i<=20;$i++){
 		'$soluong[$i]',
 		'$nams-$thangs-$ngays'
 		)" ;
-		mysqli_query($link, $insert) or die(mysqli_error($link));
+		mysql_query($insert) or die(mysql_error());
 		$recc++;
 	}
 	if ($check==1) {
-		$tenthietbisql12 = mysqli_query($link, "SELECT mavattu FROM danhmucvattu_iso where mahoso='$hosomay'") ;
+		$tenthietbisql12 = mysql_query("SELECT mavattu FROM danhmucvattu_iso where mahoso='$hosomay'") ;
 		$checkvt=0;
-		while($row = mysqli_fetch_array($tenthietbisql12))
+		while($row = mysql_fetch_array($tenthietbisql12))
 		{
 			$mavattu =$row['mavattu'];
 			if($mavattu==$malinhkien[$i]){
@@ -6626,7 +6612,7 @@ for($i=1;$i<=20;$i++){
 			soluong='$soluong[$i]',
 			ngayth='$nams-$thangs-$ngays'
 			WHERE mahoso='$hosomay' and mavattu='$mavattu'" ;
-			mysqli_query($link, $update1) or die(mysqli_error($link));
+			mysql_query($update1) or die(mysql_error());
 		}else{
 			if($mota[$i]!="") {
 			$insert = "insert into danhmucvattu_iso(
@@ -6652,7 +6638,7 @@ for($i=1;$i<=20;$i++){
 			'$soluong[$i]',
 			'$nams-$thangs-$ngays'
 			)" ;
-			mysqli_query($link, $insert) or die(mysqli_error($link));
+			mysql_query($insert) or die(mysql_error());
 			$recc++;
 			}
 		}
@@ -6663,19 +6649,19 @@ for($i=1;$i<=20;$i++){
 	//	echo "$sl[$i] $hosomay</br>";
 		
 		$delete = " DELETE FROM danhmucvattu_iso WHERE mahoso = '$hosomay' and mavattu='$sl[$i]'" ;
-		$result = mysqli_query($link, "$delete") or die(mysqli_error($link));
+		$result = mysql_query("$delete") or die(mysql_error());
 	}	
 }
 /// end danhmucvattu
-$r5=mysqli_query($link, "SELECT max(stt) as ttt FROM ngthuchien_iso");
-while($row = mysqli_fetch_array($r5))
+$r5=mysql_query("SELECT max(stt) as ttt FROM ngthuchien_iso");
+while($row = mysql_fetch_array($r5))
 {
 	$ttt =$row['ttt'];
 }
 $ttt++;
 $check=0;
-$tenthietbisql12 = mysqli_query($link, "SELECT mahoso FROM ngthuchien_iso") ;
-while($row = mysqli_fetch_array($tenthietbisql12))
+$tenthietbisql12 = mysql_query("SELECT mahoso FROM ngthuchien_iso") ;
+while($row = mysql_fetch_array($tenthietbisql12))
 {
 	$mahoso =$row['mahoso'];
 	if($mahoso==$hosomay)	{
@@ -6708,14 +6694,14 @@ while($row = mysqli_fetch_array($tenthietbisql12))
               
                 '$gio[$i]' 
 		)" ;
-		mysqli_query($link, $insert) or die(mysqli_error($link));
+		mysql_query($insert) or die(mysql_error());
 		$ttt++;
 	}
 	}
 	if ($check==1) {
-		$r9=mysqli_query($link, "SELECT stt  FROM ngthuchien_iso where mahoso='$hosomay' ORDER BY stt ASC");
+		$r9=mysql_query("SELECT stt  FROM ngthuchien_iso where mahoso='$hosomay' ORDER BY stt ASC");
 		$j=1;
-		while($row = mysqli_fetch_array($r9))
+		while($row = mysql_fetch_array($r9))
 		{
 			$stt =$row['stt'];
 			if ($hoten[$j]!="") {
@@ -6730,10 +6716,10 @@ while($row = mysqli_fetch_array($tenthietbisql12))
 			giolv$cm='$gio[$j]'
 			
 			WHERE mahoso='$hosomay' and stt='$stt'" ;
-			mysqli_query($link, $update2) or die(mysqli_error($link));
+			mysql_query($update2) or die(mysql_error());
 			}else {
 			$delete = " DELETE FROM ngthuchien_iso WHERE mahoso = '$hosomay' and stt='$stt'" ;
-			$result = mysqli_query($link, "$delete") or die(mysqli_error($link));
+			$result = mysql_query("$delete") or die(mysql_error());
 			}
 			$j++;
 		}
@@ -6763,23 +6749,23 @@ while($row = mysqli_fetch_array($tenthietbisql12))
 		
                         '$gio[$i]' 
 			)" ;
-			mysqli_query($link, $insert) or die(mysqli_error($link));
+			mysql_query($insert) or die(mysql_error());
 			$ttt++;
 			}
 		}
 	}
-$tenthietbisql12 = mysqli_query($link, "SELECT stt FROM bangsolieu_iso where sohoso='$hosomay'") ;
+$tenthietbisql12 = mysql_query("SELECT stt FROM bangsolieu_iso where sohoso='$hosomay'") ;
 for ($i=1;$i<10;$i++) {
 	$tentailieu[$i]=isset($_POST["tentailieu$i"]) ? $_POST["tentailieu$i"] : '';
 }
 $num=1;
-while($row = mysqli_fetch_array($tenthietbisql12))
+while($row = mysql_fetch_array($tenthietbisql12))
 {
 	$stt =$row['stt'];
 	$update2 = "update bangsolieu_iso SET 
 	tentailieu='$tentailieu[$num]'
 	WHERE sohoso='$hosomay' and stt='$stt'" ;
-	mysqli_query($link, $update2) or die(mysqli_error($link));
+	mysql_query($update2) or die(mysql_error());
 	$num++;
 }
 $num=$num-1;
@@ -6806,15 +6792,15 @@ if(!empty($_FILES['files']['name'])){
 				continue;
 			}else{	
 	            if(move_uploaded_file($_FILES["files"]["tmp_name"][$f], $path.$name))
-				$maxstt = mysqli_query($link, "SELECT max(stt) as tt FROM bangsolieu_iso ") ;
-				while($row = mysqli_fetch_array($maxstt))
+				$maxstt = mysql_query("SELECT max(stt) as tt FROM bangsolieu_iso ") ;
+				while($row = mysql_fetch_array($maxstt))
 				{
 					$tt =$row['tt'];
 				}
 				$tt++;
 				$j=$num+$i;
 				$insert1 = " insert into bangsolieu_iso(stt,tentailieu,link,sohoso) values ('$tt','$tentailieu[$j]','$name','$hosomay')";
-				mysqli_query($link, $insert1) or die(mysqli_error($link));
+				mysql_query($insert1) or die(mysql_error());
 	        }
 	        }
 	    }
@@ -6956,9 +6942,9 @@ for ($i=1;$i<=10;$i++) {
 	$linktailieu[$i] ="";
 }
 $check1=0;
-$tenthietbisql22 = mysqli_query($link, "SELECT * FROM bangsolieu_iso ") ;
+$tenthietbisql22 = mysql_query("SELECT * FROM bangsolieu_iso ") ;
 $j=1;
-while($row = mysqli_fetch_array($tenthietbisql22))
+while($row = mysql_fetch_array($tenthietbisql22))
 {
 	$sohoso =$row['sohoso'];
 	if($sohoso==$hosomay)	{
@@ -7086,8 +7072,8 @@ for($i=1;$i<6;$i++) {
 }
 
 $maquanly=isset($_POST['maquanly']) ? $_POST['maquanly'] : '';
-$tenthietbisql11 = mysqli_query($link, "SELECT * FROM hososcbd_iso WHERE maql='$maquanly' and hoso='$hosomay'") ;
-while($row = mysqli_fetch_array($tenthietbisql11))
+$tenthietbisql11 = mysql_query("SELECT * FROM hososcbd_iso WHERE maql='$maquanly' and hoso='$hosomay'") ;
+while($row = mysql_fetch_array($tenthietbisql11))
 {
 	$ngayth =$row['ngayth'];	
 	$ngaykt =$row['ngaykt'];
@@ -7119,9 +7105,9 @@ for($i=1;$i<9;$i++) {
 	$hoten[$i]="";
 	$giolv[$i]="";
 }
-$tenthietbisql12 = mysqli_query($link, "SELECT * FROM ngthuchien_iso WHERE  mahoso='$hosomay'") ;
+$tenthietbisql12 = mysql_query("SELECT * FROM ngthuchien_iso WHERE  mahoso='$hosomay'") ;
 $k=1;
-while($row = mysqli_fetch_array($tenthietbisql12))
+while($row = mysql_fetch_array($tenthietbisql12))
 {
 	$hoten[$k]=$row['hoten'];
 	$giolv[$k]=$row['giolv'];
@@ -8947,9 +8933,9 @@ mso-themecolor:text1'>Danh mục vật tư tiêu hao:<o:p></o:p></span></p>
   style='font-size:12.0pt;color:black;mso-themecolor:text1'>&#272;VT<o:p></o:p></span></p>
   </td>
   </tr>";
-$tenthietbisql13 = mysqli_query($link, "SELECT * FROM danhmucvattu_iso WHERE  mahoso='$hosomay'") ;
+$tenthietbisql13 = mysql_query("SELECT * FROM danhmucvattu_iso WHERE  mahoso='$hosomay'") ;
 $k=0;
-while($row = mysqli_fetch_array($tenthietbisql13))
+while($row = mysql_fetch_array($tenthietbisql13))
 {
 	$k++;
 //	$mavattu=$row['mavattu'];
@@ -9071,8 +9057,8 @@ echo "
 <td style=\"text-align:left;color:black;font-size: 18;width:300px;padding-left:20px;background-color:#9966CC;\"> <strong>Mã thiết bị</strong> </td>
 <td> <select name=\"mavtbd\" onchange=\"this.form.submit()\" style=\"border-style:none;width:100%;background:#00FFFF;height:30px;\">
 		<option value=\"\"> </option>" ;
-    	$tenthietbisql2 = mysqli_query($link, "SELECT DISTINCT mavt FROM hososcbd_iso WHERE maql='$mabaoduong'") ;
-		while($row = mysqli_fetch_array($tenthietbisql2))
+    	$tenthietbisql2 = mysql_query("SELECT DISTINCT mavt FROM hososcbd_iso WHERE maql='$mabaoduong'") ;
+		while($row = mysql_fetch_array($tenthietbisql2))
 		{
 			$mavt =$row['mavt'];	
 			echo "<option value=\"$mavt\" style=\"background:#87CEEB;\"> $mavt </option>";
@@ -9132,8 +9118,8 @@ if($mavtbd!="")
 
 $mabaoduong1=isset($_POST['mabaoduong1']) ? $_POST['mabaoduong1'] : '';
 
-$tenthietbisql13 = mysqli_query($link, "SELECT * FROM hososcbd_iso WHERE maql='$mabaoduong1' and mavt='$mavtbd'") ;
-while($row = mysqli_fetch_array($tenthietbisql13))
+$tenthietbisql13 = mysql_query("SELECT * FROM hososcbd_iso WHERE maql='$mabaoduong1' and mavt='$mavtbd'") ;
+while($row = mysql_fetch_array($tenthietbisql13))
 {
 	$ngayth =$row['ngayth'];	
 	$ngaykt =$row['ngaykt'];
@@ -9252,10 +9238,10 @@ ttktafter='$ttktafter',
 ghichu='$ghichu'
 WHERE maql='$mabaoduong2' and mavt='$mavtbd1'" ;
 
-mysqli_query($link, $update) or die(mysqli_error($link));
+mysql_query($update) or die(mysql_error());
 
-$tenthietbisql12 = mysqli_query($link, "SELECT * FROM hososcbd_iso WHERE maql='$mabaoduong2' and mavt='$mavtbd1'") ;
-while($row = mysqli_fetch_array($tenthietbisql12))
+$tenthietbisql12 = mysql_query("SELECT * FROM hososcbd_iso WHERE maql='$mabaoduong2' and mavt='$mavtbd1'") ;
+while($row = mysql_fetch_array($tenthietbisql12))
 {
 	$somay =$row['somay'];
 }
@@ -9301,8 +9287,8 @@ SCTB&#272;VL
 </ul>
 </tr>";
 $i=1;
-	$tenthietbisql13 = mysqli_query($link, "SELECT * FROM hososcbd_iso WHERE maql='$mabaoduong2'") ;
-	while($row = mysqli_fetch_array($tenthietbisql13))
+	$tenthietbisql13 = mysql_query("SELECT * FROM hososcbd_iso WHERE maql='$mabaoduong2'") ;
+	while($row = mysql_fetch_array($tenthietbisql13))
 	{
 		$mavt=$row['mavt'];
 		$hoso=$row['hoso'];
@@ -9460,8 +9446,8 @@ SCTB&#272;VL
   </td>
  </tr>";
 $i=1;
-	$tenthietbisql13 = mysqli_query($link, "SELECT * FROM hososcbd_iso WHERE maql='$mabaoduong3'") ;
-	while($row = mysqli_fetch_array($tenthietbisql13))
+	$tenthietbisql13 = mysql_query("SELECT * FROM hososcbd_iso WHERE maql='$mabaoduong3'") ;
+	while($row = mysql_fetch_array($tenthietbisql13))
 	{
 		$mavt=$row['mavt'];
 		$hoso=$row['hoso'];
@@ -9614,8 +9600,8 @@ SCTB&#272;VL </td>
 <td style=\"width:300px;\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <strong>Đơn vị</strong> 
 	<select name=\"donvi\" style=\"width:200px;background:#8adaa5;height:25px;\" >
 	<option value=\"$donvi\">$donvi</option>";
-		$r3 = mysqli_query($link, "SELECT DISTINCT madv,tendv FROM donvi_iso");
-		while($row = mysqli_fetch_array($r3))
+		$r3 = mysql_query("SELECT DISTINCT madv,tendv FROM donvi_iso");
+		while($row = mysql_fetch_array($r3))
 		{
 			$madv =$row['madv'];
 			$tendv = $row['tendv'];
@@ -9740,8 +9726,8 @@ $tinhtrangcvk[$i]=isset($_POST["tinhtrangcvk$i"]) ? $_POST["tinhtrangcvk$i"] : '
 $ndyeucaucvk[$i]=isset($_POST["ndyeucaucvk$i"]) ? $_POST["ndyeucaucvk$i"] : '';
 }
 
-$result=mysqli_query($link, "SELECT max(stt) as tt FROM hosocvk_iso");
-while($row = mysqli_fetch_array($result))
+$result=mysql_query("SELECT max(stt) as tt FROM hosocvk_iso");
+while($row = mysql_fetch_array($result))
 {
 	$recc =$row['tt'];
 }
@@ -9806,7 +9792,7 @@ chiphi
 '',
 ''
 )" ;
-mysqli_query($link, $insert) or die(mysqli_error($link));
+mysql_query($insert) or die(mysql_error());
 $recc++;
 }
 }
@@ -10020,8 +10006,8 @@ exit;
 if($sohscvk!="")
 {
 
-$tenthietbisql0 = mysqli_query($link, "SELECT * FROM hosocvk_iso WHERE soycdv='$sohscvk' ") ;
-while($row = mysqli_fetch_array($tenthietbisql0))
+$tenthietbisql0 = mysql_query("SELECT * FROM hosocvk_iso WHERE soycdv='$sohscvk' ") ;
+while($row = mysql_fetch_array($tenthietbisql0))
 {
 	$ngayyc =$row['ngayyc'];
 	$madv =$row['madv'];	
@@ -10110,8 +10096,8 @@ SCTB&#272;VL</strong> </td>
 </ul>
 </tr>";
 $i=1;	
-	$tenthietbisql1 = mysqli_query($link, "SELECT * FROM hosocvk_iso WHERE soycdv='$sohscvk' ") ;
-	while($row = mysqli_fetch_array($tenthietbisql1))
+	$tenthietbisql1 = mysql_query("SELECT * FROM hosocvk_iso WHERE soycdv='$sohscvk' ") ;
+	while($row = mysql_fetch_array($tenthietbisql1))
 	{
 		$tenvt =$row['tenvt'];
 		$sovt =$row['sovt'];	
@@ -10159,8 +10145,8 @@ if($xuatcvk=="xuatbbcvk")
 
 $sohscvk1=isset($_POST['sohscvk1']) ? $_POST['sohscvk1'] : '';
 
-$tenthietbisql14 = mysqli_query($link, "SELECT * FROM hosocvk_iso WHERE soycdv='$sohscvk1'") ;
-while($row = mysqli_fetch_array($tenthietbisql14))
+$tenthietbisql14 = mysql_query("SELECT * FROM hosocvk_iso WHERE soycdv='$sohscvk1'") ;
+while($row = mysql_fetch_array($tenthietbisql14))
 {
 	$ngayyc =$row['ngayyc'];
 	$madv =$row['madv'];	
@@ -10297,8 +10283,8 @@ SCTB&#272;VL</strong></td>
  </tr>";
  
  	$i=1;
-		$tenthietbisql17 = mysqli_query($link, "SELECT * FROM hosocvk_iso WHERE soycdv='$sohscvk1'") ;
-		while($row = mysqli_fetch_array($tenthietbisql17))
+		$tenthietbisql17 = mysql_query("SELECT * FROM hosocvk_iso WHERE soycdv='$sohscvk1'") ;
+		while($row = mysql_fetch_array($tenthietbisql17))
 		{
 			$tenvt =$row['tenvt'];
 			$sovt =$row['sovt'];	
@@ -10433,8 +10419,8 @@ var cal = new CalendarPopup();
 <td style=\"text-align:left;color:black;font-size: 18;width:300px;padding-left:20px;background-color:#FFE4B5;\"> <strong>Mã quản lý</strong> </td>
 <td><select style=\"border-style:none;width:100%;height:30px;\">
 		<option value=\"$maquanlycvk\">$maquanlycvk</option>" ;
-    	$tenthietbisql1 = mysqli_query($link, "SELECT DISTINCT maql FROM hosocvk_iso WHERE maql='$maquanlycvk'") ;
-		while($row = mysqli_fetch_array($tenthietbisql1))
+    	$tenthietbisql1 = mysql_query("SELECT DISTINCT maql FROM hosocvk_iso WHERE maql='$maquanlycvk'") ;
+		while($row = mysql_fetch_array($tenthietbisql1))
 		{
 			$maql =$row['maql'];	
 			echo "<option value=\"$maql\" style=\"background:#87CEEB;\"> $maql </option>";
@@ -10445,8 +10431,8 @@ var cal = new CalendarPopup();
 <td style=\"text-align:left;color:black;font-size: 18;width:300px;padding-left:20px;background-color:#9966CC;\"> <strong>Mã thiết bị</strong> </td>
 <td> <select name=\"mavattucvk\" style=\"border-style:none;width:100%;height:30px;\" onchange=\"this.form.submit()\">
 		<option value=\"\"></option>" ;
-    	$tenthietbisql2 = mysqli_query($link, "SELECT DISTINCT tenvt FROM hosocvk_iso WHERE maql='$maquanlycvk'") ;
-		while($row = mysqli_fetch_array($tenthietbisql2))
+    	$tenthietbisql2 = mysql_query("SELECT DISTINCT tenvt FROM hosocvk_iso WHERE maql='$maquanlycvk'") ;
+		while($row = mysql_fetch_array($tenthietbisql2))
 		{
 			$tenvt =$row['tenvt'];	
 			echo "<option value=\"$tenvt\" style=\"background:#87CEEB;\"> $tenvt </option>";
@@ -10513,9 +10499,9 @@ for ($i=1;$i<=10;$i++) {
 	$linktailieu[$i] ="";
 }
 $check1=0;
-$tenthietbisql22 = mysqli_query($link, "SELECT * FROM bangsolieu_iso ") ;
+$tenthietbisql22 = mysql_query("SELECT * FROM bangsolieu_iso ") ;
 $j=1;
-while($row = mysqli_fetch_array($tenthietbisql22))
+while($row = mysql_fetch_array($tenthietbisql22))
 {
 	$sohoso =$row['sohoso'];
 	if($sohoso==$hosomay)	{
@@ -10625,8 +10611,8 @@ if($mavattucvk!="")
 {
 
 $maquanlycvk1=isset($_POST['maquanlycvk1']) ? $_POST['maquanlycvk1'] : '';
-$tenthietbisql17 = mysqli_query($link, "SELECT * FROM hosocvk_iso WHERE maql='$maquanlycvk1' and tenvt='$mavattucvk'") ;
-while($row = mysqli_fetch_array($tenthietbisql17))
+$tenthietbisql17 = mysql_query("SELECT * FROM hosocvk_iso WHERE maql='$maquanlycvk1' and tenvt='$mavattucvk'") ;
+while($row = mysql_fetch_array($tenthietbisql17))
 {
 		$soycdv =$row['soycdv'];
 		$ngayth =$row['ngayth'];
@@ -10682,8 +10668,8 @@ for($i=0;$i<=strlen($ngaystamp1);$i++) {
 }
 
 $check=0;
-$tenthietbisql12 = mysqli_query($link, "SELECT * FROM danhmucvattu_iso") ;
-while($row = mysqli_fetch_array($tenthietbisql12))
+$tenthietbisql12 = mysql_query("SELECT * FROM danhmucvattu_iso") ;
+while($row = mysql_fetch_array($tenthietbisql12))
 {
 	$mahoso =$row['mahoso'];
 	if($mahoso==$soycdv)	$check=1;
@@ -10718,8 +10704,8 @@ var cal = new CalendarPopup();
 <td style=\"text-align:left;color:black;font-size: 18;width:300px;padding-left:20px;background-color:#FFE4B5;\"> <strong>Mã quản lý</strong> </td>
 <td><select style=\"border-style:none;width:100%;height:30px;color:blue;text-align:center;\">
 		<option value=\"$maquanlycvk1\">$maquanlycvk1</option>" ;
-    	$tenthietbisql1 = mysqli_query($link, "SELECT DISTINCT maql FROM hosocvk_iso WHERE maql='$maquanlycvk'") ;
-		while($row = mysqli_fetch_array($tenthietbisql1))
+    	$tenthietbisql1 = mysql_query("SELECT DISTINCT maql FROM hosocvk_iso WHERE maql='$maquanlycvk'") ;
+		while($row = mysql_fetch_array($tenthietbisql1))
 		{
 			$maql =$row['maql'];	
 			echo "<option value=\"$maql\" style=\"background:#87CEEB;\"> $maql </option>";
@@ -10730,8 +10716,8 @@ var cal = new CalendarPopup();
 <td style=\"text-align:left;color:black;font-size: 18;width:300px;padding-left:20px;background-color:#9966CC;\"> <strong>Mã thiết bị</strong> </td>
 <td> <select style=\"border-style:none;width:100%;height:30px;color:blue;text-align:center;\">
 		<option value=\"$mavattucvk\">$mavattucvk</option>" ;
-    	$tenthietbisql2 = mysqli_query($link, "SELECT DISTINCT tenvt FROM hosocvk_iso WHERE maql='$maquanlycvk'") ;
-		while($row = mysqli_fetch_array($tenthietbisql2))
+    	$tenthietbisql2 = mysql_query("SELECT DISTINCT tenvt FROM hosocvk_iso WHERE maql='$maquanlycvk'") ;
+		while($row = mysql_fetch_array($tenthietbisql2))
 		{
 			$tenvt =$row['tenvt'];	
 			echo "<option value=\"$tenvt\" style=\"background:#87CEEB;\"> $tenvt </option>";
@@ -10826,9 +10812,9 @@ for ($i=1;$i<=10;$i++) {
 	$linktailieu[$i] ="";
 }
 $check1=0;
-$tenthietbisql22 = mysqli_query($link, "SELECT * FROM bangsolieu_iso ") ;
+$tenthietbisql22 = mysql_query("SELECT * FROM bangsolieu_iso ") ;
 $j=1;
-while($row = mysqli_fetch_array($tenthietbisql22))
+while($row = mysql_fetch_array($tenthietbisql22))
 {
 	$sohoso =$row['sohoso'];
 	if($sohoso==$hosomay)	{
@@ -10894,8 +10880,8 @@ echo"<tr>
 <td><center> $i </center> </td>
 <td><select name=\"tenthietbihotrocvk$i\" style=\"border-style:none;width:100%;height:30px;\" onchange=\"this.form.submit()\">
 		<option value=\"$tbdosc[$i]\">$tbdosc[$i]</option>";
-		$tenthietbisql16 = mysqli_query($link, "SELECT DISTINCT * FROM thietbihotro_iso") ;
-		while($row = mysqli_fetch_array($tenthietbisql16))
+		$tenthietbisql16 = mysql_query("SELECT DISTINCT * FROM thietbihotro_iso") ;
+		while($row = mysql_fetch_array($tenthietbisql16))
 		{
 			$tenthietbi =$row['tenthietbi'];	
 			echo "<option value=\"$tenthietbi\" style=\"background:#87CEEB;\"> $tenthietbi </option>";
@@ -10923,8 +10909,8 @@ echo"<p style=\"margin-left:50px;\"> <strong>II. DANH MỤC VẬT TƯ</strong> <
 $i=1;
 
 if($check==1){
-$tenthietbisql15 = mysqli_query($link, "SELECT * FROM danhmucvattu_iso WHERE mahoso='$soycdv'") ;
-while($row = mysqli_fetch_array($tenthietbisql15))
+$tenthietbisql15 = mysql_query("SELECT * FROM danhmucvattu_iso WHERE mahoso='$soycdv'") ;
+while($row = mysql_fetch_array($tenthietbisql15))
 {
 	$stt=$row['stt'];
 	$mota1 =$row['mota'];
@@ -11007,15 +10993,15 @@ echo"<input type=hidden name=tenthietbihotrocvk$i value=\"$tenthietbihotrocvk[$i
 	<input type=hidden name=serialnumbercvk$i value=\"$serialnumbercvk[$i]\">";
 }
 
-$tenthietbisql22 = mysqli_query($link, "SELECT count(*) as sum FROM danhmucvattu_iso") ;
-while($row = mysqli_fetch_array($tenthietbisql22))
+$tenthietbisql22 = mysql_query("SELECT count(*) as sum FROM danhmucvattu_iso") ;
+while($row = mysql_fetch_array($tenthietbisql22))
 {
 	$sum =$row['sum'];
 }
 
 $check=0;
-$tenthietbisql12 = mysqli_query($link, "SELECT * FROM danhmucvattu_iso") ;
-while($row = mysqli_fetch_array($tenthietbisql12))
+$tenthietbisql12 = mysql_query("SELECT * FROM danhmucvattu_iso") ;
+while($row = mysql_fetch_array($tenthietbisql12))
 {
 	$mahoso =$row['mahoso'];
 	if($mahoso==$sohs)	$check=1;
@@ -11126,9 +11112,9 @@ for ($i=1;$i<=10;$i++) {
 	$linktailieu[$i] ="";
 }
 $check1=0;
-$tenthietbisql22 = mysqli_query($link, "SELECT * FROM bangsolieu_iso ") ;
+$tenthietbisql22 = mysql_query("SELECT * FROM bangsolieu_iso ") ;
 $j=1;
-while($row = mysqli_fetch_array($tenthietbisql22))
+while($row = mysql_fetch_array($tenthietbisql22))
 {
 	$sohoso =$row['sohoso'];
 	if($sohoso==$hosomay)	{
@@ -11193,8 +11179,8 @@ echo"<tr>
 <td><center> $i </center> </td>
 <td><select name=\"tenthietbihotrocvk$i\" style=\"border-style:none;width:100%;height:30px;\"  onchange=\"this.form.submit()\">
 		<option value=\"$tenthietbihotrocvk[$i]\">$tenthietbihotrocvk[$i]</option>";
-		$tenthietbisql10 = mysqli_query($link, "SELECT DISTINCT tenthietbi FROM thietbihotro_iso") ;
-		while($row = mysqli_fetch_array($tenthietbisql10))
+		$tenthietbisql10 = mysql_query("SELECT DISTINCT tenthietbi FROM thietbihotro_iso") ;
+		while($row = mysql_fetch_array($tenthietbisql10))
 		{
 			$tentb =$row['tenthietbi'];	
 			echo "<option value=\"$tentb\" style=\"background:#87CEEB;\"> $tentb </option>";
@@ -11202,8 +11188,8 @@ echo"<tr>
 	echo"</select></td>
 <td><select name=\"serialnumbercvk$i\" style=\"border-style:none;width:100%;height:30px;text-align:center;\" >
 		<option value=\"$serialnumbercvk[$i]\">$serialnumbercvk[$i] </option>";
-		$tenthietbisql11 = mysqli_query($link, "SELECT DISTINCT serialnumber FROM thietbihotro_iso WHERE tenthietbi='$tenthietbihotrocvk[$i]'") ;
-		while($row = mysqli_fetch_array($tenthietbisql11))
+		$tenthietbisql11 = mysql_query("SELECT DISTINCT serialnumber FROM thietbihotro_iso WHERE tenthietbi='$tenthietbihotrocvk[$i]'") ;
+		while($row = mysql_fetch_array($tenthietbisql11))
 		{
 			$sn =$row['serialnumber'];	
 			echo "<option value=\"$sn\" style=\"background:#87CEEB;\"> $sn </option>";
@@ -11310,29 +11296,29 @@ $tenthietbihotrocvk[$i]=isset($_POST["tenthietbihotrocvk$i"]) ? $_POST["tenthiet
 $serialnumbercvk[$i]=isset($_POST["serialnumbercvk$i"]) ? $_POST["serialnumbercvk$i"] : '';
 }
 
-$tenthietbisql10 = mysqli_query($link, "SELECT max(stt) as stt FROM danhmucvattu_iso") ;
-while($row = mysqli_fetch_array($tenthietbisql10))
+$tenthietbisql10 = mysql_query("SELECT max(stt) as stt FROM danhmucvattu_iso") ;
+while($row = mysql_fetch_array($tenthietbisql10))
 {
 	$recc =$row['stt'];
 }
 $recc++;
 
 $check=0;
-$tenthietbisql12 = mysqli_query($link, "SELECT * FROM danhmucvattu_iso") ;
-while($row = mysqli_fetch_array($tenthietbisql12))
+$tenthietbisql12 = mysql_query("SELECT * FROM danhmucvattu_iso") ;
+while($row = mysql_fetch_array($tenthietbisql12))
 {
 	$mahoso =$row['mahoso'];
 	if($mahoso==$sohs)	$check=1;
 }
 
-$tenthietbisql22 = mysqli_query($link, "SELECT count(*) as sum FROM danhmucvattu_iso WHERE mahoso='$sohs'") ;
-while($row = mysqli_fetch_array($tenthietbisql22))
+$tenthietbisql22 = mysql_query("SELECT count(*) as sum FROM danhmucvattu_iso WHERE mahoso='$sohs'") ;
+while($row = mysql_fetch_array($tenthietbisql22))
 {
 	$sum =$row['sum'];
 }
 
-$tenthietbisql23 = mysqli_query($link, "SELECT count(*) as sumcount FROM danhmucvattu_iso ") ;
-while($row = mysqli_fetch_array($tenthietbisql23))
+$tenthietbisql23 = mysql_query("SELECT count(*) as sumcount FROM danhmucvattu_iso ") ;
+while($row = mysql_fetch_array($tenthietbisql23))
 {
 	$sumc=$row['sumcount'];
 }
@@ -11397,7 +11383,7 @@ serialnumbersc4='$serialnumbercvk[5]',
 nhomsc='$nhomsc'
 WHERE maql='$maquanlycvk2' and tenvt='$mavattucvk1'" ;
 
-mysqli_query($link, $update) or die(mysqli_error($link));
+mysql_query($update) or die(mysql_error());
 
 
 $checkvt=0;
@@ -11423,7 +11409,7 @@ soluong
 '$dvt[$i]',
 '$soluong[$i]'
 )" ;
-mysqli_query($link, $insert) or die(mysqli_error($link));
+mysql_query($insert) or die(mysql_error());
 
 $recc++;
 }else  break;
@@ -11445,7 +11431,7 @@ dvt='$dvt1[$h]',
 soluong='$soluong1[$h]'
 WHERE mahoso='$sohs' and stt='$h'" ;
 
-mysqli_query($link, $update1) or die(mysqli_error($link));
+mysql_query($update1) or die(mysql_error());
 
 }
 $h++;
@@ -11474,14 +11460,14 @@ soluong
 '$dvt2[$k]',
 '$soluong2[$k]'
 )" ;
-mysqli_query($link, $insert1) or die(mysqli_error($link));
+mysql_query($insert1) or die(mysql_error());
 
 $recc++;
 }else  break;
 }
 
-$tenthietbisql10 = mysqli_query($link, "SELECT * FROM hosocvk_iso WHERE maql='$maquanlycvk2' and mavt='$mavattucvk1'") ;
-while($row = mysqli_fetch_array($tenthietbisql10))
+$tenthietbisql10 = mysql_query("SELECT * FROM hosocvk_iso WHERE maql='$maquanlycvk2' and mavt='$mavattucvk1'") ;
+while($row = mysql_fetch_array($tenthietbisql10))
 {
 	$sovt =$row['sovt'];
 }
@@ -11805,8 +11791,8 @@ echo"	<p> 5. Danh mục vật tư </p>
   </td>
  </tr>";
  $j=1;
- $tenthietbisql19 = mysqli_query($link, "SELECT * FROM danhmucvattu_iso WHERE mahoso='$sohs'") ;
- while($row = mysqli_fetch_array($tenthietbisql19))
+ $tenthietbisql19 = mysql_query("SELECT * FROM danhmucvattu_iso WHERE mahoso='$sohs'") ;
+ while($row = mysql_fetch_array($tenthietbisql19))
  {
 	$mota =$row['mota'];
 	$serialnumber =$row['serialnumber'];	
@@ -11906,15 +11892,15 @@ for($i=1;$i<=5;$i++){
 $thietbihotro[$i]=isset($_POST["thietbihotro$i"]) ? $_POST["thietbihotro$i"] : '';
 $serialnumber[$i]=isset($_POST["serialnumber$i"]) ? $_POST["serialnumber$i"] : '';
 }
-$tenthietbisql10 = mysqli_query($link, "SELECT DISTINCT mavt,somay,model FROM hososcbd_iso where hoso='$hosomay'") ;
-		while($row = mysqli_fetch_array($tenthietbisql10))
+$tenthietbisql10 = mysql_query("SELECT DISTINCT mavt,somay,model FROM hososcbd_iso where hoso='$hosomay'") ;
+		while($row = mysql_fetch_array($tenthietbisql10))
 		{
 			$mavt =$row['mavt'];	
 			$somay =$row['somay'];	
 			$model =$row['model'];	
 		}
-$tenthietbisql11 = mysqli_query($link, "SELECT DISTINCT mamay,homay,dienap FROM thietbi_iso where mavt='$mavt' and somay='$somay' and model='$model'") ;
-		while($row = mysqli_fetch_array($tenthietbisql11))
+$tenthietbisql11 = mysql_query("SELECT DISTINCT mamay,homay,dienap FROM thietbi_iso where mavt='$mavt' and somay='$somay' and model='$model'") ;
+		while($row = mysql_fetch_array($tenthietbisql11))
 		{
 			$mamay =$row['mamay'];	
 			$homay=$row['homay'];
@@ -12014,8 +12000,8 @@ echo"<tr>
 <td><select name=\"hoten$i\" style=\"border-style:none;width:100%;height:30px;\"\">
 <option value=\"$hoten[$i]\">$hoten[$i]</option>
 <option value=\"\"></option>";
-		$hotensql10 = mysqli_query($link, "SELECT hoten FROM resume where donvi like'%$donvi%' and nghiviec !='yes'") ;
-		while($row = mysqli_fetch_array($hotensql10))
+		$hotensql10 = mysql_query("SELECT hoten FROM resume where donvi like'%$donvi%' and nghiviec !='yes'") ;
+		while($row = mysql_fetch_array($hotensql10))
 		{
 			$hotennv =$row['hoten'];	
 			echo "<option value=\"$hotennv\" style=\"background:#87CEEB;\"> $hotennv </option>";
@@ -12041,13 +12027,13 @@ echo"<tr>
 <td><select name=\"thietbihotro$i\" onchange=\"this.form.submit()\" style=\"border-style:none;width:100%;height:30px;\" >
 <option value=\"$thietbihotro[$i]\">$thietbihotro[$i]</option>
 <option value=\"\"></option>";
-		$tenthietbisql10 = mysqli_query($link, "SELECT DISTINCT tenthietbi FROM thietbihotro_iso where thly='0'") ;
-		while($row = mysqli_fetch_array($tenthietbisql10))
+		$tenthietbisql10 = mysql_query("SELECT DISTINCT tenthietbi FROM thietbihotro_iso where thly='0'") ;
+		while($row = mysql_fetch_array($tenthietbisql10))
 		{
 			$tentb =$row['tenthietbi'];	
-			$tenthietbisql11 = mysqli_query($link, "SELECT chusohuu FROM thietbihotro_iso where tenthietbi='$tentb' and thly='0'") ;
+			$tenthietbisql11 = mysql_query("SELECT chusohuu FROM thietbihotro_iso where tenthietbi='$tentb' and thly='0'") ;
 			$sh="";
-	         	while($row = mysqli_fetch_array($tenthietbisql11))
+	         	while($row = mysql_fetch_array($tenthietbisql11))
 			{
 				$chusohuu=$row['chusohuu'];
 				$ar=explode(" ",$chusohuu);
@@ -12064,8 +12050,8 @@ echo"</select></td>
 <td><select name=\"serialnumber$i\" style=\"border-style:none;width:100%;height:30px;text-align:center;\" >
 <option value=\"$serialnumber[$i]\">$serialnumber[$i] </option>
 <option value=\"\"></option> ";
-		$tenthietbisql11 = mysqli_query($link, "SELECT DISTINCT serialnumber FROM thietbihotro_iso WHERE tenthietbi='$thietbihotro[$i]' and thly='0'") ;
-		while($row = mysqli_fetch_array($tenthietbisql11))
+		$tenthietbisql11 = mysql_query("SELECT DISTINCT serialnumber FROM thietbihotro_iso WHERE tenthietbi='$thietbihotro[$i]' and thly='0'") ;
+		while($row = mysql_fetch_array($tenthietbisql11))
 		{
 			$sn =$row['serialnumber'];	
 			echo "<option value=\"$sn\" style=\"background:#87CEEB;\"> $sn </option>";
@@ -12108,8 +12094,8 @@ for($j=1;$j<=20;$j++){
 	<td><select name=\"mlkien$j\">
 	<option value=\"$mlkien[$j]\" style=\"background:#87CEEB;\"> $mlkien[$j] </option>
 	";
-$tenthietbisql10 = mysqli_query($link, "SELECT DISTINCT mavattu FROM danhmucvattu_iso") ;
-		while($row = mysqli_fetch_array($tenthietbisql10))
+$tenthietbisql10 = mysql_query("SELECT DISTINCT mavattu FROM danhmucvattu_iso") ;
+		while($row = mysql_fetch_array($tenthietbisql10))
 		{
 			$mlk =$row['mavattu'];	
 			echo "<option value=\"$mlk\" style=\"background:#87CEEB;\"> $mlk </option>";
@@ -12136,8 +12122,8 @@ $tenthietbisql10 = mysqli_query($link, "SELECT DISTINCT mavattu FROM danhmucvatt
 	<td><select name=\"mlkien$j\">
 	<option value=\"other\" style=\"background:#87CEEB;\"> Nhập khác </option>
 	";
-$tenthietbisql10 = mysqli_query($link, "SELECT DISTINCT mavattu FROM danhmucvattu_iso") ;
-		while($row = mysqli_fetch_array($tenthietbisql10))
+$tenthietbisql10 = mysql_query("SELECT DISTINCT mavattu FROM danhmucvattu_iso") ;
+		while($row = mysql_fetch_array($tenthietbisql10))
 		{
 			$malinhkien =$row['mavattu'];	
 			echo "<option value=\"$malinhkien\" style=\"background:#87CEEB;\"> $malinhkien </option>";
@@ -12218,9 +12204,9 @@ for ($i=1;$i<=10;$i++) {
 	$linktailieu[$i] ="";
 }
 $check1=0;
-$tenthietbisql22 = mysqli_query($link, "SELECT * FROM bangsolieu_iso ") ;
+$tenthietbisql22 = mysql_query("SELECT * FROM bangsolieu_iso ") ;
 $j=1;
-while($row = mysqli_fetch_array($tenthietbisql22))
+while($row = mysql_fetch_array($tenthietbisql22))
 {
 	$sohoso =$row['sohoso'];
 	if($sohoso==$hosomay)	{
@@ -12335,15 +12321,15 @@ for($i=1;$i<=5;$i++){
 $thietbihotro[$i]=isset($_POST["thietbihotro$i"]) ? $_POST["thietbihotro$i"] : '';
 $serialnumber[$i]=isset($_POST["serialnumber$i"]) ? $_POST["serialnumber$i"] : '';
 }
-$tenthietbisql10 = mysqli_query($link, "SELECT DISTINCT mavt,somay,model FROM hososcbd_iso where hoso='$hosomay'") ;
-		while($row = mysqli_fetch_array($tenthietbisql10))
+$tenthietbisql10 = mysql_query("SELECT DISTINCT mavt,somay,model FROM hososcbd_iso where hoso='$hosomay'") ;
+		while($row = mysql_fetch_array($tenthietbisql10))
 		{
 			$mavt =$row['mavt'];	
 			$somay =$row['somay'];	
 			$model =$row['model'];	
 		}
-$tenthietbisql11 = mysqli_query($link, "SELECT DISTINCT mamay,homay,dienap FROM thietbi_iso where mavt='$mavt' and somay='$somay' and model='$model'") ;
-		while($row = mysqli_fetch_array($tenthietbisql11))
+$tenthietbisql11 = mysql_query("SELECT DISTINCT mamay,homay,dienap FROM thietbi_iso where mavt='$mavt' and somay='$somay' and model='$model'") ;
+		while($row = mysql_fetch_array($tenthietbisql11))
 		{
 			$mamay =$row['mamay'];
 			$homay=$row['homay'];
@@ -12442,8 +12428,8 @@ echo"<tr>
 <td><select name=\"hoten$i\" style=\"border-style:none;width:100%;height:30px;\"\">
 <option value=\"$hoten[$i]\">$hoten[$i]</option>
 <option value=\"\"></option>";
-		$hotensql10 = mysqli_query($link, "SELECT hoten FROM resume where donvi like'%$donvi%' and nghiviec !='yes'") ;
-		while($row = mysqli_fetch_array($hotensql10))
+		$hotensql10 = mysql_query("SELECT hoten FROM resume where donvi like'%$donvi%' and nghiviec !='yes'") ;
+		while($row = mysql_fetch_array($hotensql10))
 		{
 			$hotennv =$row['hoten'];	
 			echo "<option value=\"$hotennv\" style=\"background:#87CEEB;\"> $hotennv </option>";
@@ -12468,13 +12454,13 @@ echo"<tr>
 <td><select name=\"thietbihotro$i\" onchange=\"this.form.submit()\" style=\"border-style:none;width:100%;height:30px;\" >
 <option value=\"$thietbihotro[$i]\">$thietbihotro[$i]</option>
 <option value=\"\"></option>";
-		$tenthietbisql10 = mysqli_query($link, "SELECT DISTINCT tenthietbi FROM thietbihotro_iso where thly='0'") ;
-		while($row = mysqli_fetch_array($tenthietbisql10))
+		$tenthietbisql10 = mysql_query("SELECT DISTINCT tenthietbi FROM thietbihotro_iso where thly='0'") ;
+		while($row = mysql_fetch_array($tenthietbisql10))
 		{
 			$tentb =$row['tenthietbi'];	
-			$tenthietbisql11 = mysqli_query($link, "SELECT chusohuu FROM thietbihotro_iso where tenthietbi='$tentb' and thly='0'") ;
+			$tenthietbisql11 = mysql_query("SELECT chusohuu FROM thietbihotro_iso where tenthietbi='$tentb' and thly='0'") ;
 			$sh="";
-	         	while($row = mysqli_fetch_array($tenthietbisql11))
+	         	while($row = mysql_fetch_array($tenthietbisql11))
 			{
 				$chusohuu=$row['chusohuu'];
 				$ar=explode(" ",$chusohuu);
@@ -12491,8 +12477,8 @@ echo"</select></td>
 <td><select name=\"serialnumber$i\" style=\"border-style:none;width:100%;height:30px;text-align:center;\" >
 <option value=\"$serialnumber[$i]\">$serialnumber[$i] </option>
 <option value=\"\"></option>";
-		$tenthietbisql11 = mysqli_query($link, "SELECT DISTINCT serialnumber FROM thietbihotro_iso WHERE tenthietbi='$thietbihotro[$i]' and thly='0'") ;
-		while($row = mysqli_fetch_array($tenthietbisql11))
+		$tenthietbisql11 = mysql_query("SELECT DISTINCT serialnumber FROM thietbihotro_iso WHERE tenthietbi='$thietbihotro[$i]' and thly='0'") ;
+		while($row = mysql_fetch_array($tenthietbisql11))
 		{
 			$sn =$row['serialnumber'];	
 			echo "<option value=\"$sn\" style=\"background:#87CEEB;\"> $sn </option>";
@@ -12535,8 +12521,8 @@ for($j=1;$j<=20;$j++){
 	<td><select name=\"mlkien$j\">
 	<option value=\"$mlkien[$j]\" style=\"background:#87CEEB;\"> $mlkien[$j] </option>
 	";
-$tenthietbisql10 = mysqli_query($link, "SELECT DISTINCT mavattu FROM danhmucvattu_iso") ;
-		while($row = mysqli_fetch_array($tenthietbisql10))
+$tenthietbisql10 = mysql_query("SELECT DISTINCT mavattu FROM danhmucvattu_iso") ;
+		while($row = mysql_fetch_array($tenthietbisql10))
 		{
 			$mlk =$row['mavattu'];	
 			echo "<option value=\"$mlk\" style=\"background:#87CEEB;\"> $mlk </option>";
@@ -12563,8 +12549,8 @@ while($j<=1+$sum){
 	<td><select name=\"mlkien$j\">
 	<option value=\"other\" style=\"background:#87CEEB;\"> Nhập khác </option>
 	";
-$tenthietbisql10 = mysqli_query($link, "SELECT DISTINCT mavattu FROM danhmucvattu_iso") ;
-		while($row = mysqli_fetch_array($tenthietbisql10))
+$tenthietbisql10 = mysql_query("SELECT DISTINCT mavattu FROM danhmucvattu_iso") ;
+		while($row = mysql_fetch_array($tenthietbisql10))
 		{
 			$malinhkien =$row['mavattu'];	
 			echo "<option value=\"$malinhkien\" style=\"background:#87CEEB;\"> $malinhkien </option>";
@@ -12648,9 +12634,9 @@ for ($i=1;$i<=10;$i++) {
 	$linktailieu[$i] ="";
 }
 $check1=0;
-$tenthietbisql22 = mysqli_query($link, "SELECT * FROM bangsolieu_iso ") ;
+$tenthietbisql22 = mysql_query("SELECT * FROM bangsolieu_iso ") ;
 $j=1;
-while($row = mysqli_fetch_array($tenthietbisql22))
+while($row = mysql_fetch_array($tenthietbisql22))
 {
 	$sohoso =$row['sohoso'];
 	if($sohoso==$hosomay)	{
@@ -12754,8 +12740,8 @@ $ghichu = isset($_POST['ghichu']) ? $_POST['ghichu'] : '';
 $nhomsc = isset($_POST['nhomsc']) ? $_POST['nhomsc'] : '';
 $tiendocv = isset($_POST['tiendocv']) ? $_POST['tiendocv'] : '';
 
-$tenthietbisql22 = mysqli_query($link, "SELECT count(*) as sum FROM danhmucvattu_iso WHERE mahoso='$sohs'") ;
-while($row = mysqli_fetch_array($tenthietbisql22))
+$tenthietbisql22 = mysql_query("SELECT count(*) as sum FROM danhmucvattu_iso WHERE mahoso='$sohs'") ;
+while($row = mysql_fetch_array($tenthietbisql22))
 {
 	$sum =$row['sum'];
 }
@@ -12877,9 +12863,9 @@ for ($i=1;$i<=10;$i++) {
 	$linktailieu[$i] ="";
 }
 $check1=0;
-$tenthietbisql22 = mysqli_query($link, "SELECT * FROM bangsolieu_iso ") ;
+$tenthietbisql22 = mysql_query("SELECT * FROM bangsolieu_iso ") ;
 $j=1;
-while($row = mysqli_fetch_array($tenthietbisql22))
+while($row = mysql_fetch_array($tenthietbisql22))
 {
 	$sohoso =$row['sohoso'];
 	if($sohoso==$hosomay)	{
@@ -12971,8 +12957,8 @@ echo"<p style=\"margin-left:50px;\"> <strong>II. DANH MỤC VẬT TƯ</strong> <
 </tr>";
 $i=1;
 
-$tenthietbisql21 = mysqli_query($link, "SELECT * FROM danhmucvattu_iso WHERE mahoso='$sohs'") ;
-while($row = mysqli_fetch_array($tenthietbisql21))
+$tenthietbisql21 = mysql_query("SELECT * FROM danhmucvattu_iso WHERE mahoso='$sohs'") ;
+while($row = mysql_fetch_array($tenthietbisql21))
 {
 	$mota1 =$row['mota'];
 	$pn1 =$row['serialnumber'];	
@@ -13063,8 +13049,8 @@ SCTB&#272;VL</td>
 </td>
 </tr>
 </table>";
-		$r3 = mysqli_query($link, "SELECT dienthoai,ycthemkh,xemxetxuong,ngayyc,madv,ngyeucau,ngnhyeucau,lo,gieng,mo FROM hososcbd_iso where phieu='$search'");
-		while($row = mysqli_fetch_array($r3))
+		$r3 = mysql_query("SELECT dienthoai,ycthemkh,xemxetxuong,ngayyc,madv,ngyeucau,ngnhyeucau,lo,gieng,mo FROM hososcbd_iso where phieu='$search'");
+		while($row = mysql_fetch_array($r3))
 		{
 			$madv =$row['madv'];
 			$khachhang =$row['ngyeucau'];
@@ -13120,8 +13106,8 @@ echo"   <form method=\"post\" action=\"formsc.php\" enctype=\"multipart/form-dat
 	<select name=\"donvi\" onchange=\"this.form.submit()\" style=\"background:#8adaa5;width:100.5%;height:25px;\" >
 	      <option value=\"$madv\">$madv</option>";
 
-		$r3 = mysqli_query($link, "SELECT DISTINCT madv,tendv FROM donvi_iso");
-		while($row = mysqli_fetch_array($r3))
+		$r3 = mysql_query("SELECT DISTINCT madv,tendv FROM donvi_iso");
+		while($row = mysql_fetch_array($r3))
 		{
 			$madv =$row['madv'];
 			$tendv = $row['tendv'];
@@ -13157,9 +13143,9 @@ echo"   <form method=\"post\" action=\"formsc.php\" enctype=\"multipart/form-dat
 		<th style=\"text-align:center;font-size: 15 ;width:300px;\"> TÌNH TRẠNG KỸ THUẬT </th>
 		<th style=\"text-align:center;font-size: 15 ;width:80px;\"> NỘI DUNG </br>YÊU CẦU</th>
 		<th style=\"text-align:center;font-size: 15 ;width:150px;\"> MÁY TỪ ĐÂU VỀ XƯỞNG</th>";
-		$r3 = mysqli_query($link, "SELECT DISTINCT ngaykt FROM hososcbd_iso where phieu='$search'");
+		$r3 = mysql_query("SELECT DISTINCT ngaykt FROM hososcbd_iso where phieu='$search'");
 		$ckl=0;
-		while($row = mysqli_fetch_array($r3))
+		while($row = mysql_fetch_array($r3))
 		{
 			if ($row['ngaykt']!="0000-00-00") {$ckl=1;break;}
 		}
@@ -13172,9 +13158,9 @@ echo"   <form method=\"post\" action=\"formsc.php\" enctype=\"multipart/form-dat
 			echo"<th style=\"text-align:center;font-size: 15 ;width:100px;\">All<center><input type=\"checkbox\"  id=\"selectall\" disabled=disabled></center></th></tr>";
 		}
 	$i=1;
-		$r4 = mysqli_query($link, "SELECT DISTINCT mavt,somay,solg,cv,hoso,ttktbefore,vitrimaybd,model,ngaykt FROM hososcbd_iso where phieu='$search'");
+		$r4 = mysql_query("SELECT DISTINCT mavt,somay,solg,cv,hoso,ttktbefore,vitrimaybd,model,ngaykt FROM hososcbd_iso where phieu='$search'");
 		
-		while($row = mysqli_fetch_array($r4))
+		while($row = mysql_fetch_array($r4))
 		{
 			$mavt =$row['mavt'];	
 			$somay =$row['somay'];	
@@ -13206,8 +13192,8 @@ echo"   <form method=\"post\" action=\"formsc.php\" enctype=\"multipart/form-dat
 		<option value=\"$mavt.$model\">$modelmay1</option>
 		" ;
 			if($phanquyen=="1") {
-    		$tenthietbisql1 = mysqli_query($link, "SELECT DISTINCT mavt,tenvt,model FROM thietbi_iso where madv='$donvi' order by mavt") ;
-		while($row = mysqli_fetch_array($tenthietbisql1))
+    		$tenthietbisql1 = mysql_query("SELECT DISTINCT mavt,tenvt,model FROM thietbi_iso where madv='$donvi' order by mavt") ;
+		while($row = mysql_fetch_array($tenthietbisql1))
 		{
 			$mavt1 =$row['mavt'];	
 			$tenvt1 =$row['tenvt'];
@@ -13217,8 +13203,8 @@ echo"   <form method=\"post\" action=\"formsc.php\" enctype=\"multipart/form-dat
 		}
 			}else{
 		        if ($ngaykt=="0000-00-00"){
-    		$tenthietbisql1 = mysqli_query($link, "SELECT DISTINCT mavt,tenvt,model FROM thietbi_iso where madv='$donvi' order by mavt") ;
-		while($row = mysqli_fetch_array($tenthietbisql1))
+    		$tenthietbisql1 = mysql_query("SELECT DISTINCT mavt,tenvt,model FROM thietbi_iso where madv='$donvi' order by mavt") ;
+		while($row = mysql_fetch_array($tenthietbisql1))
 		{
 			$mavt1 =$row['mavt'];	
 			$tenvt1 =$row['tenvt'];
@@ -13234,8 +13220,8 @@ echo"   <form method=\"post\" action=\"formsc.php\" enctype=\"multipart/form-dat
 		<option value=\"$somay\">$somay</option>
 		";
 			if($phanquyen=="1") {
-		$tenthietbisql2 = mysqli_query($link, "SELECT DISTINCT somay FROM thietbi_iso WHERE mavt='$mavt' and model='$model' ") ;
-		while($row = mysqli_fetch_array($tenthietbisql2))
+		$tenthietbisql2 = mysql_query("SELECT DISTINCT somay FROM thietbi_iso WHERE mavt='$mavt' and model='$model' ") ;
+		while($row = mysql_fetch_array($tenthietbisql2))
 		{
 			$sm =$row['somay'];
 			if($sm!=$somay[$i]){	
@@ -13244,8 +13230,8 @@ echo"   <form method=\"post\" action=\"formsc.php\" enctype=\"multipart/form-dat
 		}
 			}else{
 				if ($ngaykt=="0000-00-00"){
-		$tenthietbisql2 = mysqli_query($link, "SELECT DISTINCT somay FROM thietbi_iso WHERE mavt='$mavt' and model='$model' ") ;
-		while($row = mysqli_fetch_array($tenthietbisql2))
+		$tenthietbisql2 = mysql_query("SELECT DISTINCT somay FROM thietbi_iso WHERE mavt='$mavt' and model='$model' ") ;
+		while($row = mysql_fetch_array($tenthietbisql2))
 		{
 			$sm =$row['somay'];
 			if($sm!=$somay[$i]){	
@@ -13271,8 +13257,8 @@ echo"   <form method=\"post\" action=\"formsc.php\" enctype=\"multipart/form-dat
 		echo"<select name=\"vitri$i\"  style=\"border-style:none;width:100%;height:30px;\">
 			<option value=\"$vitri\">$vitri</option>" ;
 		if($phanquyen=="1") {
-    		$tenthietbisql1 = mysqli_query($link, "SELECT DISTINCT mavitri,tenvitri FROM vitri_iso") ;
-		while($row = mysqli_fetch_array($tenthietbisql1))
+    		$tenthietbisql1 = mysql_query("SELECT DISTINCT mavitri,tenvitri FROM vitri_iso") ;
+		while($row = mysql_fetch_array($tenthietbisql1))
 		{
 			$mavitri =$row['mavitri'];	
 			$tenvitri =$row['tenvitri'];	
@@ -13280,8 +13266,8 @@ echo"   <form method=\"post\" action=\"formsc.php\" enctype=\"multipart/form-dat
 		}
 		}else{
 			if ($ngaykt=="0000-00-00"){
-    		$tenthietbisql1 = mysqli_query($link, "SELECT DISTINCT mavitri,tenvitri FROM vitri_iso") ;
-		while($row = mysqli_fetch_array($tenthietbisql1))
+    		$tenthietbisql1 = mysql_query("SELECT DISTINCT mavitri,tenvitri FROM vitri_iso") ;
+		while($row = mysql_fetch_array($tenthietbisql1))
 		{
 			$mavitri =$row['mavitri'];	
 			$tenvitri =$row['tenvitri'];	
@@ -13304,8 +13290,8 @@ echo"   <form method=\"post\" action=\"formsc.php\" enctype=\"multipart/form-dat
 		<select name=\"thietbi$i\" onchange=\"this.form.submit()\" style=\"border-style:none;width:100%;height:30px;\">
 		<option value=\"\"></option>
 		" ;
-    		$tenthietbisql1 = mysqli_query($link, "SELECT DISTINCT mavt,tenvt,model FROM thietbi_iso where madv='$donvi' order by mavt") ;
-		while($row = mysqli_fetch_array($tenthietbisql1))
+    		$tenthietbisql1 = mysql_query("SELECT DISTINCT mavt,tenvt,model FROM thietbi_iso where madv='$donvi' order by mavt") ;
+		while($row = mysql_fetch_array($tenthietbisql1))
 		{
 			$mavt1 =$row['mavt'];	
 			$tenvt1 =$row['tenvt'];
@@ -13337,8 +13323,8 @@ echo"   <form method=\"post\" action=\"formsc.php\" enctype=\"multipart/form-dat
 		</tr>";
 		echo"</table>";
 		$check_day=0;
-		$r5 = mysqli_query($link, "SELECT DISTINCT ngaykt FROM hososcbd_iso where phieu='$search'");
-		while($row = mysqli_fetch_array($r5))
+		$r5 = mysql_query("SELECT DISTINCT ngaykt FROM hososcbd_iso where phieu='$search'");
+		while($row = mysql_fetch_array($r5))
 		{
 			$ngaykt =$row['ngaykt'];
 		        if ($ngaykt=="0000-00-00") {$check_day=1;break;}	
@@ -13364,8 +13350,8 @@ echo"   <form method=\"post\" action=\"formsc.php\" enctype=\"multipart/form-dat
 		<tr><td style=\"height:30px;padding-left:50px;width:800px;\"><strong>PHỤC VỤ SẢN XUẤT CHO LÔ: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</strong>
 		<select name=\"lo\"  style=\"border-style:none;width:50%;height:30px;font_family:Times New Roman;background:#8adaa5;height:25px;\">
 		<option value=\"$lo\">$lo</option>";
-		$sqllo = mysqli_query($link, "SELECT DISTINCT malo,tenlo FROM lo_iso") ;
-		while($row = mysqli_fetch_array($sqllo))
+		$sqllo = mysql_query("SELECT DISTINCT malo,tenlo FROM lo_iso") ;
+		while($row = mysql_fetch_array($sqllo))
 		{
 			$malo =$row['malo'];	
 			$tenlo =$row['tenlo'];	
@@ -13377,8 +13363,8 @@ echo"   <form method=\"post\" action=\"formsc.php\" enctype=\"multipart/form-dat
 		<tr><td style=\"height:30px;padding-left:50px;width:800px;\"><strong>PHỤC VỤ SẢN XUẤT CHO MỎ :&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </strong>
 		<select name=\"mo\"  style=\"border-style:none;width:50%;height:30px;font_family:Times New Roman;background:#8adaa5;height:25px;\">
 		<option value=\"$mo\">$mo</option>";
-		$sqlmo = mysqli_query($link, "SELECT DISTINCT mamo,tenmo FROM mo_iso") ;
-		while($row = mysqli_fetch_array($sqlmo))
+		$sqlmo = mysql_query("SELECT DISTINCT mamo,tenmo FROM mo_iso") ;
+		while($row = mysql_fetch_array($sqlmo))
 		{
 			$mamo =$row['mamo'];	
 			$tenmo =$row['tenmo'];	
@@ -13461,8 +13447,8 @@ echo"   <form method=\"post\" action=\"formsc.php\" enctype=\"multipart/form-dat
 		<tr><td style=\"height:30px;padding-left:50px;width:800px;\"><strong>PHỤC VỤ SẢN XUẤT CHO LÔ: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</strong>
 		<select name=\"lo\"  style=\"border-style:none;width:50%;height:30px;font_family:Times New Roman;background:#8adaa5;height:25px;\">
 		<option value=\"$lo\">$lo</option>";
-		$sqllo = mysqli_query($link, "SELECT DISTINCT malo,tenlo FROM lo_iso") ;
-		while($row = mysqli_fetch_array($sqllo))
+		$sqllo = mysql_query("SELECT DISTINCT malo,tenlo FROM lo_iso") ;
+		while($row = mysql_fetch_array($sqllo))
 		{
 			$malo =$row['malo'];	
 			$tenlo =$row['tenlo'];	
@@ -13474,8 +13460,8 @@ echo"   <form method=\"post\" action=\"formsc.php\" enctype=\"multipart/form-dat
 		<tr><td style=\"height:30px;padding-left:50px;width:800px;\"><strong>PHỤC VỤ SẢN XUẤT CHO MỎ :&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </strong>
 		<select name=\"mo\"  style=\"border-style:none;width:50%;height:30px;font_family:Times New Roman;background:#8adaa5;height:25px;\">
 		<option value=\"$mo\">$mo</option>";
-		$sqlmo = mysqli_query($link, "SELECT DISTINCT mamo,tenmo FROM mo_iso") ;
-		while($row = mysqli_fetch_array($sqlmo))
+		$sqlmo = mysql_query("SELECT DISTINCT mamo,tenmo FROM mo_iso") ;
+		while($row = mysql_fetch_array($sqlmo))
 		{
 			$mamo =$row['mamo'];	
 			$tenmo =$row['tenmo'];	
@@ -13530,8 +13516,8 @@ echo"   <form method=\"post\" action=\"formsc.php\" enctype=\"multipart/form-dat
 }
 if($readhoso!="")
 {
-$tenthietbisql9 = mysqli_query($link, "SELECT * FROM hososcbd_iso WHERE hoso='$readhoso'") ;
-while($row = mysqli_fetch_array($tenthietbisql9))
+$tenthietbisql9 = mysql_query("SELECT * FROM hososcbd_iso WHERE hoso='$readhoso'") ;
+while($row = mysql_fetch_array($tenthietbisql9))
 {
 	$ngayth =$row['ngayth'];	
 	$ngaykt =$row['ngaykt'];
@@ -13565,8 +13551,8 @@ while($row = mysqli_fetch_array($tenthietbisql9))
 	$ketluan=$row['ketluan'];
 	$ghichufinal=$row['ghichufinal'];
 }
-$tenthietbisql13 = mysqli_query($link, "SELECT homay,mamay,dienap FROM thietbi_iso where mavt='$mavattu' and somay='$somay' and model='$model'") ;
-while($row = mysqli_fetch_array($tenthietbisql13))
+$tenthietbisql13 = mysql_query("SELECT homay,mamay,dienap FROM thietbi_iso where mavt='$mavattu' and somay='$somay' and model='$model'") ;
+while($row = mysql_fetch_array($tenthietbisql13))
 {
 	$homay=$row['homay'];
 	$mamay=$row['mamay'];
@@ -13660,9 +13646,9 @@ for ($k=1;$k<=8;$k++) {
 	$hoten[$k]="";
 	$gio[$k]="";
 }
-$ngthsql = mysqli_query($link, "SELECT hoten,giolv FROM ngthuchien_iso WHERE mahoso='$readhoso' ORDER BY stt ASC") ;
+$ngthsql = mysql_query("SELECT hoten,giolv FROM ngthuchien_iso WHERE mahoso='$readhoso' ORDER BY stt ASC") ;
 $j=1;
-while($row = mysqli_fetch_array($ngthsql))
+while($row = mysql_fetch_array($ngthsql))
 {
 	$hoten[$j]=$row['hoten'];
 	$gio[$j]=$row['giolv'];
@@ -13677,8 +13663,8 @@ echo"<tr>
 <td><select name=\"hoten$i\" style=\"border-style:none;width:100%;height:30px;\"\">
 <option value=\"$hoten[$i]\">$hoten[$i]</option>
 <option value=\"\"></option>";
-		$hotensql10 = mysqli_query($link, "SELECT hoten FROM resume where donvi like'%$donvi%' and nghiviec !='yes'") ;
-		while($row = mysqli_fetch_array($hotensql10))
+		$hotensql10 = mysql_query("SELECT hoten FROM resume where donvi like'%$donvi%' and nghiviec !='yes'") ;
+		while($row = mysql_fetch_array($hotensql10))
 		{
 			$hotennv =$row['hoten'];	
 			echo "<option value=\"$hotennv\" style=\"background:#87CEEB;\"> $hotennv </option>";
@@ -13724,8 +13710,8 @@ echo"<p style=\"margin-left:50px;\"> <strong>III. DANH MỤC VẬT TƯ</strong> 
 </ul>
 </tr>";
 $i=1;
-$tenthietbisql15 = mysqli_query($link, "SELECT * FROM danhmucvattu_iso WHERE mahoso='$readhoso'") ;
-while($row = mysqli_fetch_array($tenthietbisql15))
+$tenthietbisql15 = mysql_query("SELECT * FROM danhmucvattu_iso WHERE mahoso='$readhoso'") ;
+while($row = mysql_fetch_array($tenthietbisql15))
 {
 	$malinhkien1 = $row['mavattu'];
 	$mota1 =$row['mota'];
@@ -13802,9 +13788,9 @@ for ($i=1;$i<=10;$i++) {
 	$linktailieu[$i] ="";
 }
 $check1=0;
-$tenthietbisql22 = mysqli_query($link, "SELECT * FROM bangsolieu_iso ") ;
+$tenthietbisql22 = mysql_query("SELECT * FROM bangsolieu_iso ") ;
 $j=1;
-while($row = mysqli_fetch_array($tenthietbisql22))
+while($row = mysql_fetch_array($tenthietbisql22))
 {
 	$sohoso =$row['sohoso'];
 	if($sohoso==$readhoso)	{
@@ -13876,8 +13862,8 @@ echo"<center><p style=\"margin-top:100px;\"> <strong>HỒ SƠ CỦA MÃ VẬT T�
 </ul>
 </tr>";
 $i=1;
-$tenthietbisql15 = mysqli_query($link, "SELECT * FROM danhmucvattu_iso WHERE mavattu='$readmavattu'") ;
-while($row = mysqli_fetch_array($tenthietbisql15))
+$tenthietbisql15 = mysql_query("SELECT * FROM danhmucvattu_iso WHERE mavattu='$readmavattu'") ;
+while($row = mysql_fetch_array($tenthietbisql15))
 {
 	$mahoso = $row['mahoso'];
 	$mamay = $row['mamay'];
@@ -13907,8 +13893,8 @@ echo"</table></center></br>";
 
 if($edithoso!="")
 {
-$tenthietbisql9 = mysqli_query($link, "SELECT * FROM hososcbd_iso WHERE hoso='$edithoso'") ;
-while($row = mysqli_fetch_array($tenthietbisql9))
+$tenthietbisql9 = mysql_query("SELECT * FROM hososcbd_iso WHERE hoso='$edithoso'") ;
+while($row = mysql_fetch_array($tenthietbisql9))
 {
 
 	$ngayth =$row['ngayth'];	
@@ -14031,14 +14017,14 @@ $ngaystemp = substr($ngaystemp,$p);
 }
 }
 $check=0;
-$tenthietbisql12 = mysqli_query($link, "SELECT mahoso FROM danhmucvattu_iso") ;
-while($row = mysqli_fetch_array($tenthietbisql12))
+$tenthietbisql12 = mysql_query("SELECT mahoso FROM danhmucvattu_iso") ;
+while($row = mysql_fetch_array($tenthietbisql12))
 {
 	$mahoso =$row['mahoso'];
 	if($mahoso==$edithoso)	$check=1;
 }
-$tenthietbisql11 = mysqli_query($link, "SELECT DISTINCT mamay,homay,dienap FROM thietbi_iso where mavt='$mavt' and somay='$somay' and model='$model'") ;
-		while($row = mysqli_fetch_array($tenthietbisql11))
+$tenthietbisql11 = mysql_query("SELECT DISTINCT mamay,homay,dienap FROM thietbi_iso where mavt='$mavt' and somay='$somay' and model='$model'") ;
+		while($row = mysql_fetch_array($tenthietbisql11))
 		{
 			$mamay =$row['mamay'];	
 			$homay=$row['homay'];
@@ -14087,25 +14073,25 @@ value=\"$maql\" />
 <td style=\"text-align:left;color:black;font-size: 18;width:300px;padding-left:20px;background-color:#9966CC;\"> <strong>Mã thiết bị</strong> </td>
 <td> <select name=\"hosomay\" onchange=\"this.form.submit()\" style=\"border-style:none;width:100%;height:30px;\">
 <option value=\"$edithoso\">$mamay</option>";
-$result2 = mysqli_query($link, "SELECT ghichufinal FROM hososcbd_iso WHERE mavt='$mavt' and somay='$somay' and model='$model'") ;
-while($row = mysqli_fetch_array($result2))
+$result2 = mysql_query("SELECT ghichufinal FROM hososcbd_iso WHERE mavt='$mavt' and somay='$somay' and model='$model'") ;
+while($row = mysql_fetch_array($result2))
 				{
 					if($row['ghichufinal']!="")
 					$ghichufinal =$row['ghichufinal'];
 				}
                                if ($phanquyen=="1")
-		$tenthietbisql1 = mysqli_query($link, "SELECT DISTINCT mavt,somay,hoso,model FROM hososcbd_iso WHERE phieu='$fieu'") ;
+		$tenthietbisql1 = mysql_query("SELECT DISTINCT mavt,somay,hoso,model FROM hososcbd_iso WHERE phieu='$fieu'") ;
 		else
-		$tenthietbisql1 = mysqli_query($link, "SELECT DISTINCT mavt,somay,hoso,model FROM hososcbd_iso WHERE phieu='$fieu' and ngaykt ='0000-00-00'") ;
+		$tenthietbisql1 = mysql_query("SELECT DISTINCT mavt,somay,hoso,model FROM hososcbd_iso WHERE phieu='$fieu' and ngaykt ='0000-00-00'") ;
 		$ck=0;
-		while($row = mysqli_fetch_array($tenthietbisql1))
+		while($row = mysql_fetch_array($tenthietbisql1))
 		{
 			$mavtt =$row['mavt'];	
 			$somayt =$row['somay'];
 			$hosom =$row['hoso'];
 			$modelt =$row['model'];
-			$sqlmodel = mysqli_query($link, "SELECT DISTINCT mamay FROM thietbi_iso WHERE mavt='$mavtt' and somay='$somayt' and model='$modelt'") ;
-			while($row = mysqli_fetch_array($sqlmodel))
+			$sqlmodel = mysql_query("SELECT DISTINCT mamay FROM thietbi_iso WHERE mavt='$mavtt' and somay='$somayt' and model='$modelt'") ;
+			while($row = mysql_fetch_array($sqlmodel))
 			{
 			$mamay =$row['mamay'];
 			}
@@ -14167,9 +14153,9 @@ for ($k=1;$k<=8;$k++) {
 	$hoten[$k]="";
 	$gio[$k]="";
 }
-$ngthsql = mysqli_query($link, "SELECT hoten,giolv FROM ngthuchien_iso WHERE mahoso='$edithoso' ORDER BY stt ASC") ;
+$ngthsql = mysql_query("SELECT hoten,giolv FROM ngthuchien_iso WHERE mahoso='$edithoso' ORDER BY stt ASC") ;
 $j=1;
-while($row = mysqli_fetch_array($ngthsql))
+while($row = mysql_fetch_array($ngthsql))
 {
 	$hoten[$j]=$row['hoten'];
 	$gio[$j]=$row['giolv'];
@@ -14184,8 +14170,8 @@ echo"<tr>
 <td><select name=\"hoten$i\" style=\"border-style:none;width:100%;height:30px;\"\">
 <option value=\"$hoten[$i]\">$hoten[$i]</option>
 <option value=\"\"></option>";
-		$hotensql10 = mysqli_query($link, "SELECT hoten FROM resume where donvi like'%$donvi%' and nghiviec !='yes'") ;
-		while($row = mysqli_fetch_array($hotensql10))
+		$hotensql10 = mysql_query("SELECT hoten FROM resume where donvi like'%$donvi%' and nghiviec !='yes'") ;
+		while($row = mysql_fetch_array($hotensql10))
 		{
 			$hotennv =$row['hoten'];	
 			echo "<option value=\"$hotennv\" style=\"background:#87CEEB;\"> $hotennv </option>";
@@ -14212,13 +14198,13 @@ echo"<tr>
 <td><select name=\"thietbihotro$i\" style=\"border-style:none;width:100%;height:30px;\" onchange=\"this.form.submit()\">
 <option value=\"$tbdosc[$i]\">$tbdosc[$i]</option>
 <option value=\"\"></option>";
-		$tenthietbisql10 = mysqli_query($link, "SELECT DISTINCT tenthietbi FROM thietbihotro_iso where thly='0'") ;
-		while($row = mysqli_fetch_array($tenthietbisql10))
+		$tenthietbisql10 = mysql_query("SELECT DISTINCT tenthietbi FROM thietbihotro_iso where thly='0'") ;
+		while($row = mysql_fetch_array($tenthietbisql10))
 		{
 			$tentb =$row['tenthietbi'];	
-			$tenthietbisql11 = mysqli_query($link, "SELECT chusohuu FROM thietbihotro_iso where tenthietbi='$tentb' and thly='0'") ;
+			$tenthietbisql11 = mysql_query("SELECT chusohuu FROM thietbihotro_iso where tenthietbi='$tentb' and thly='0'") ;
 			$sh="";
-	         	while($row = mysqli_fetch_array($tenthietbisql11))
+	         	while($row = mysql_fetch_array($tenthietbisql11))
 			{
 				$chusohuu=$row['chusohuu'];
 				$ar=explode(" ",$chusohuu);
@@ -14257,8 +14243,8 @@ echo"<p style=\"margin-left:50px;\"> <strong>III. DANH MỤC VẬT TƯ</strong> 
 </tr>";
 $i=1;
 if($check==1){
-$tenthietbisql15 = mysqli_query($link, "SELECT * FROM danhmucvattu_iso WHERE mahoso='$edithoso'") ;
-while($row = mysqli_fetch_array($tenthietbisql15))
+$tenthietbisql15 = mysql_query("SELECT * FROM danhmucvattu_iso WHERE mahoso='$edithoso'") ;
+while($row = mysql_fetch_array($tenthietbisql15))
 {
 	$malinhkien1 = $row['mavattu'];
 	$mota1 =$row['mota'];
@@ -14270,8 +14256,8 @@ while($row = mysqli_fetch_array($tenthietbisql15))
 	<td><select name=\"mlkien$i\">
 	<option value=\"$malinhkien1\">$malinhkien1</option>
 	";
-$tenthietbisql10 = mysqli_query($link, "SELECT DISTINCT mavattu FROM danhmucvattu_iso") ;
-		while($row = mysqli_fetch_array($tenthietbisql10))
+$tenthietbisql10 = mysql_query("SELECT DISTINCT mavattu FROM danhmucvattu_iso") ;
+		while($row = mysql_fetch_array($tenthietbisql10))
 		{
 			$malinhkien =$row['mavattu'];	
 			echo "<option value=\"$malinhkien\" style=\"background:#87CEEB;\"> $malinhkien </option>";
@@ -14293,8 +14279,8 @@ $tenthietbisql10 = mysqli_query($link, "SELECT DISTINCT mavattu FROM danhmucvatt
 	<td><center> $j </center> </td>
 	<td><select name=\"mlkien$j\">
 	<option value=\"other\">Nhập mới</option>";
-$tenthietbisql10 = mysqli_query($link, "SELECT DISTINCT mavattu FROM danhmucvattu_iso") ;
-		while($row = mysqli_fetch_array($tenthietbisql10))
+$tenthietbisql10 = mysql_query("SELECT DISTINCT mavattu FROM danhmucvattu_iso") ;
+		while($row = mysql_fetch_array($tenthietbisql10))
 		{
 			$malinhkien =$row['mavattu'];	
 			echo "<option value=\"$malinhkien\" style=\"background:#87CEEB;\"> $malinhkien </option>";
@@ -14378,9 +14364,9 @@ for ($i=1;$i<=10;$i++) {
 	$linktailieu[$i] ="";
 }
 $check1=0;
-$tenthietbisql22 = mysqli_query($link, "SELECT * FROM bangsolieu_iso ") ;
+$tenthietbisql22 = mysql_query("SELECT * FROM bangsolieu_iso ") ;
 $j=1;
-while($row = mysqli_fetch_array($tenthietbisql22))
+while($row = mysql_fetch_array($tenthietbisql22))
 {
 	$sohoso =$row['sohoso'];
 	if($sohoso==$edithoso)	{

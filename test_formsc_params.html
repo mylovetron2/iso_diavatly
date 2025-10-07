@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Test FormSC.php</title>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: Arial;
+            margin: 20px;
+        }
+
+        .form {
+            background: #f9f9f9;
+            padding: 20px;
+            border: 1px solid #ddd;
+            margin: 10px 0;
+        }
+
+        input,
+        select {
+            padding: 5px;
+            margin: 5px;
+        }
+
+        button {
+            padding: 8px 15px;
+            background: #007cba;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Test FormSC.php với các tham số khác nhau</h2>
+
+    <div class="form">
+        <h3>1. Test Nhập phiếu yêu cầu dịch vụ</h3>
+        <form method="post" action="formsc.php">
+            <input type="hidden" name="submit" value="nhapdulieu">
+            <input type="hidden" name="hoso" value="phieuscbd">
+            <input type="text" name="username" placeholder="Username" value="admin">
+            <input type="password" name="password" placeholder="Password" value="123">
+            <button type="submit">Test Phiếu YC Dịch Vụ</button>
+        </form>
+    </div>
+
+    <div class="form">
+        <h3>2. Test Nhập phiếu thực hiện</h3>
+        <form method="post" action="formsc.php">
+            <input type="hidden" name="submit" value="nhapdulieu">
+            <input type="hidden" name="hoso" value="phieuthuchien">
+            <input type="text" name="username" placeholder="Username" value="admin">
+            <button type="submit">Test Phiếu Thực Hiện</button>
+        </form>
+    </div>
+
+    <div class="form">
+        <h3>3. Test Biên bản bàn giao</h3>
+        <form method="post" action="formsc.php">
+            <input type="hidden" name="submit" value="nhapdulieu">
+            <input type="hidden" name="hoso" value="bienbanscbd">
+            <input type="text" name="username" placeholder="Username" value="admin">
+            <button type="submit">Test Biên Bản</button>
+        </form>
+    </div>
+
+    <div class="form">
+        <h3>4. Links Debug</h3>
+        <p>
+            <a href="debug_formsc_php56.php">📊 Debug Info</a> |
+            <a href="formsc.php">📄 FormSC.php Direct</a> |
+            <a href="index.php">🏠 Index.php</a>
+        </p>
+    </div>
+</body>
+
+</html>

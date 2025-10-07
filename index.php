@@ -319,8 +319,8 @@ if(empty($_POST['username']) || empty($_POST['password'])) {
 	echo "<center><span style=\"color: red; font-weight:bold\">Tên đăng nhập hoặc mật khẩu  không đúng</span></center>";
 exit;
 }	
-$result = mysql_query("SELECT username FROM users ") ;
-	while($row = mysql_fetch_array($result))
+$result = mysqli_query($link, "SELECT username FROM users ") ;
+	while($row = mysqli_fetch_array($result))
 	{
 		if ( $username == ""  . $row['username'] . "" ) {
 			$check = "1" ;
@@ -335,16 +335,16 @@ include ("formdn.php") ;
 echo "<center><span style=\"color: red; font-weight:bold\">Tên đăng nhập hoặc mật khẩu  không đúng</span></center>";
 } else {
 	// Now create an object from the data you've retrieved.
-$result = mysql_query("SELECT password FROM users WHERE username='$username' ") ;
+$result = mysqli_query($link, "SELECT password FROM users WHERE username='$username' ") ;
 
-	$row = mysql_fetch_object($result);
+	$row = mysqli_fetch_object($result);
 // For example now the password is checked if they're equal.
 if($row->password != $password) {
 	include ("formdn.php") ;
 	echo "<center><span style=\"color: red; font-weight:bold\">Tên đăng nhập hoặc mật khẩu  không đúng</span></center>";
 } else {
-	$r2 = mysql_query("SELECT madv,phanquyen FROM users WHERE username='$username' ") ;
-        while($row = mysql_fetch_array($r2))
+	$r2 = mysqli_query($link, "SELECT madv,phanquyen FROM users WHERE username='$username' ") ;
+        while($row = mysqli_fetch_array($r2))
 		{
 			$madv =$row['madv'];
 			$phanquyen =$row['phanquyen'];
@@ -426,7 +426,7 @@ break ;
 case 'logout':
 {
 	// Close DataBase
-	mysql_close($link);
+	mysqli_close($link);
 	//session_destroy();
 	include ("formdn.php");
 	exit ;
@@ -535,8 +535,8 @@ break;
 	}	
 	case "Viết nhật ký":
 	{
-		$r2 = mysql_query("SELECT madv,phanquyen FROM users WHERE username='$username' ") ;
-        while($row = mysql_fetch_array($r2))
+		$r2 = mysqli_query($link, "SELECT madv,phanquyen FROM users WHERE username='$username' ") ;
+        while($row = mysqli_fetch_array($r2))
 		{
 			$madv =$row['madv'];
 			$phanquyen =$row['phanquyen'];
@@ -591,8 +591,8 @@ break;
 }	
 case "Sửa nhật ký":
 	{
-		$r2 = mysql_query("SELECT madv,phanquyen FROM users WHERE username='$username' ") ;
-        while($row = mysql_fetch_array($r2))
+		$r2 = mysqli_query($link, "SELECT madv,phanquyen FROM users WHERE username='$username' ") ;
+        while($row = mysqli_fetch_array($r2))
 		{
 			$madv =$row['madv'];
 			$phanquyen =$row['phanquyen'];
@@ -647,8 +647,8 @@ break;
 }	
 case "Thống kê nhật ký":
 	{
-		$r2 = mysql_query("SELECT madv,phanquyen FROM users WHERE username='$username' ") ;
-        while($row = mysql_fetch_array($r2))
+		$r2 = mysqli_query($link, "SELECT madv,phanquyen FROM users WHERE username='$username' ") ;
+        while($row = mysqli_fetch_array($r2))
 		{
 			$madv =$row['madv'];
 			$phanquyen =$row['phanquyen'];

@@ -21,103 +21,7 @@ echo"<head>
 -->
 
 	</style>
-	
-<style>
-.version-navigator {
-    background: #f8f9fa;
-    border: 1px solid #dee2e6;
-    border-radius: 8px;
-    padding: 10px 15px;
-    margin: 15px auto;
-    max-width: 800px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 15px;
-    flex-wrap: wrap;
-    font-family: Arial, sans-serif;
-}
-
-.nav-label {
-    color: #495057;
-    font-weight: bold;
-    font-size: 14px;
-}
-
-.nav-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    padding: 8px 15px;
-    border-radius: 20px;
-    text-decoration: none;
-    font-weight: bold;
-    font-size: 13px;
-    transition: all 0.3s ease;
-    border: 2px solid transparent;
-}
-
-.nav-btn.current {
-    background: #6c757d;
-    color: white;
-}
-
-.nav-btn.alternative {
-    background: #e9ecef;
-    color: #495057;
-    border: 2px solid #ced4da;
-}
-
-.nav-btn.alternative:hover {
-    background: #007bff;
-    color: white;
-    border-color: #007bff;
-}
-
-.version-badge {
-    background: #dc3545;
-    color: white;
-    padding: 2px 6px;
-    border-radius: 8px;
-    font-size: 10px;
-    font-weight: bold;
-    margin-left: 3px;
-}
-
-@media (max-width: 600px) {
-    .version-navigator {
-        flex-direction: column;
-        text-align: center;
-        gap: 10px;
-    }
-}
-</style>
-
 <div align="center"><strong>TI&#7870;N &#272;&#7896; C&Ocirc;NG VI&#7878;C SỬA CHỮA BẢO DƯỠNG</strong></div>
-
-<!-- Version Navigator -->
-<div class="version-navigator">
-    <div class="nav-label">📂 Phiên bản:</div>
-    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-        <a href="#" class="nav-btn current">
-            📜 Phiên bản cũ
-            <span class="version-badge">v1.0</span>
-        </a>
-        <a href="tiendocongviec_professional.php<?php 
-            $params = [];
-            if ($username) $params[] = 'user=' . urlencode($username);
-            if ($nhomsct) $params[] = 'nhomsc=' . urlencode($nhomsct);
-            if ($start) $params[] = 'start=' . $start;
-            echo !empty($params) ? '?' . implode('&', $params) : '';
-        ?>" class="nav-btn alternative">
-            🚀 Professional
-            <span class="version-badge" style="background: #28a745;">v2.0</span>
-        </a>
-        <a href="demo_search_features.php" class="nav-btn alternative">
-            ▶️ Demo tìm kiếm
-        </a>
-    </div>
-</div>
 
 <?php 
 
@@ -137,10 +41,10 @@ echo "<td style='padding: 15px;'><input  style='width:120px;color:red;border: 1p
 echo"<form method=\"post\" action=\"tiendocongviec.php\" enctype=\"multipart/form-data\" name=\"example\">";
 
 
-$tin=mysqli_query($link, "select stt from hososcbd_iso where bg='0' and nhomsc like '%$nhomsct%'");
+$tin=mysql_query("select stt from hososcbd_iso where bg='0' and nhomsc like '%$nhomsct%'");
 $row_per_page=15; //Số dòng trên 1 trang
 //tính số dòng cần hiển thị
-$rows=mysqli_num_rows($tin);
+$rows=mysql_num_rows($tin);
 //tính số trang cần để hiển thị
 if ($rows>$row_per_page) $page=ceil($rows/$row_per_page); 
 else $page=1; //nếu số dòng trong CSDL nhỏ hơn hoặc bằng số dòng trên 1 trang thì chỉ có 1 trang để hiển thị
@@ -184,19 +88,19 @@ if ($nhomsct=="PEND") $ht="Máy chờ vật tư";
    <?php $stt=0; echo "<input type=hidden name= user value= $username>"; echo "</form>"; ?>
 <?php 
 if($nhomsct=="DONE")
-	$sql=mysqli_query($link, "select mavt,somay,model,cv,date_format(`ngayyc`,'%d-%m-%Y') as ngayyc,date_format(`ngayth`,'%d-%m-%Y') as ngayth,hoso,nhomsc,date_format(`ngaykt`,'%d-%m-%Y') as ngaykt,ttktafter,vitrimaybd,lo,gieng,datediff(ngaykt,ngayth) as ngaysc from hososcbd_iso where bg='0' and ngaykt!='0000-00-00' order by stt desc limit $start,$row_per_page"); //bắt đầu lấy dữ liệu (^)_(^)
+	$sql=mysql_query("select mavt,somay,model,cv,date_format(`ngayyc`,'%d-%m-%Y') as ngayyc,date_format(`ngayth`,'%d-%m-%Y') as ngayth,hoso,nhomsc,date_format(`ngaykt`,'%d-%m-%Y') as ngaykt,ttktafter,vitrimaybd,lo,gieng,datediff(ngaykt,ngayth) as ngaysc from hososcbd_iso where bg='0' and ngaykt!='0000-00-00' order by stt desc limit $start,$row_per_page"); //bắt đầu lấy dữ liệu (^)_(^)
 else 
 	if($nhomsct=="DO")
-	$sql=mysqli_query($link, "select mavt,somay,model,cv,date_format(`ngayyc`,'%d-%m-%Y') as ngayyc,date_format(`ngayth`,'%d-%m-%Y') as ngayth,hoso,nhomsc,date_format(`ngaykt`,'%d-%m-%Y') as ngaykt,ttktafter,vitrimaybd,lo,gieng,datediff(ngaykt,ngayth) as ngaysc from hososcbd_iso where bg='0' and ngayth!='0000-00-00' and ngaykt ='0000-00-00' order by stt desc limit $start,$row_per_page"); //bắt đầu lấy dữ liệu (^)_(^)
+	$sql=mysql_query("select mavt,somay,model,cv,date_format(`ngayyc`,'%d-%m-%Y') as ngayyc,date_format(`ngayth`,'%d-%m-%Y') as ngayth,hoso,nhomsc,date_format(`ngaykt`,'%d-%m-%Y') as ngaykt,ttktafter,vitrimaybd,lo,gieng,datediff(ngaykt,ngayth) as ngaysc from hososcbd_iso where bg='0' and ngayth!='0000-00-00' and ngaykt ='0000-00-00' order by stt desc limit $start,$row_per_page"); //bắt đầu lấy dữ liệu (^)_(^)
 else
 	if($nhomsct=="WDO")
-	$sql=mysqli_query($link, "select mavt,somay,model,cv,date_format(`ngayyc`,'%d-%m-%Y') as ngayyc,date_format(`ngayth`,'%d-%m-%Y') as ngayth,hoso,nhomsc,date_format(`ngaykt`,'%d-%m-%Y') as ngaykt,ttktafter,vitrimaybd,lo,gieng,datediff(ngaykt,ngayth) as ngaysc from hososcbd_iso where bg='0' and ngayth='0000-00-00' and ngaykt ='0000-00-00' order by stt desc limit $start,$row_per_page"); //bắt đầu lấy dữ liệu (^)_(^)
+	$sql=mysql_query("select mavt,somay,model,cv,date_format(`ngayyc`,'%d-%m-%Y') as ngayyc,date_format(`ngayth`,'%d-%m-%Y') as ngayth,hoso,nhomsc,date_format(`ngaykt`,'%d-%m-%Y') as ngaykt,ttktafter,vitrimaybd,lo,gieng,datediff(ngaykt,ngayth) as ngaysc from hososcbd_iso where bg='0' and ngayth='0000-00-00' and ngaykt ='0000-00-00' order by stt desc limit $start,$row_per_page"); //bắt đầu lấy dữ liệu (^)_(^)
 else
 	if($nhomsct=="PEND")
-	$sql=mysqli_query($link, "select mavt,somay,model,cv,date_format(`ngayyc`,'%d-%m-%Y') as ngayyc,date_format(`ngayth`,'%d-%m-%Y') as ngayth,hoso,nhomsc,date_format(`ngaykt`,'%d-%m-%Y') as ngaykt,ttktafter,vitrimaybd,lo,gieng,datediff(ngaykt,ngayth) as ngaysc from hososcbd_iso where bg='0' and ngayth!='0000-00-00' and ngaykt ='0000-00-00' and ttktafter='Chờ vật tư thay thế'  order by stt desc limit $start,$row_per_page"); //bắt đầu lấy dữ liệu (^)_(^)
+	$sql=mysql_query("select mavt,somay,model,cv,date_format(`ngayyc`,'%d-%m-%Y') as ngayyc,date_format(`ngayth`,'%d-%m-%Y') as ngayth,hoso,nhomsc,date_format(`ngaykt`,'%d-%m-%Y') as ngaykt,ttktafter,vitrimaybd,lo,gieng,datediff(ngaykt,ngayth) as ngaysc from hososcbd_iso where bg='0' and ngayth!='0000-00-00' and ngaykt ='0000-00-00' and ttktafter='Chờ vật tư thay thế'  order by stt desc limit $start,$row_per_page"); //bắt đầu lấy dữ liệu (^)_(^)
 else	
-$sql=mysqli_query($link, "select mavt,somay,model,cv,date_format(`ngayyc`,'%d-%m-%Y') as ngayyc,date_format(`ngayth`,'%d-%m-%Y') as ngayth,hoso,nhomsc,date_format(`ngaykt`,'%d-%m-%Y') as ngaykt,ttktafter,vitrimaybd,lo,gieng,datediff(ngaykt,ngayth) as ngaysc from hososcbd_iso where bg='0' and nhomsc like '%$nhomsct%' order by stt desc limit $start,$row_per_page"); //bắt đầu lấy dữ liệu (^)_(^)
-while($row=mysqli_fetch_array($sql)){
+$sql=mysql_query("select mavt,somay,model,cv,date_format(`ngayyc`,'%d-%m-%Y') as ngayyc,date_format(`ngayth`,'%d-%m-%Y') as ngayth,hoso,nhomsc,date_format(`ngaykt`,'%d-%m-%Y') as ngaykt,ttktafter,vitrimaybd,lo,gieng,datediff(ngaykt,ngayth) as ngaysc from hososcbd_iso where bg='0' and nhomsc like '%$nhomsct%' order by stt desc limit $start,$row_per_page"); //bắt đầu lấy dữ liệu (^)_(^)
+while($row=mysql_fetch_array($sql)){
 		 	 $mavt =$row['mavt'];
 			 $somay =$row['somay'];
 			 $model =$row['model'];
@@ -212,13 +116,13 @@ while($row=mysqli_fetch_array($sql)){
 			 $gieng =$row['gieng'];
 			 $cv =$row['cv'];
 			 if ($model=="") $mamay=$mavt;else $mamay="$mavt-$model";
-			 $result1 = mysqli_query($link, "SELECT tenvt FROM thietbi_iso WHERE mavt='$mavt' and somay='$somay' and model='$model' ") ;
-				while($row = mysqli_fetch_array($result1))
+			 $result1 = mysql_query("SELECT tenvt FROM thietbi_iso WHERE mavt='$mavt' and somay='$somay' and model='$model' ") ;
+				while($row = mysql_fetch_array($result1))
 				{
 				$tenvt =$row['tenvt'];
 				}
-				$result2 = mysqli_query($link, "SELECT ttktafter FROM hososcbd_iso WHERE mavt='$mavt' and somay='$somay' and model='$model'") ;
-				while($row = mysqli_fetch_array($result2))
+				$result2 = mysql_query("SELECT ttktafter FROM hososcbd_iso WHERE mavt='$mavt' and somay='$somay' and model='$model'") ;
+				while($row = mysql_fetch_array($result2))
 				{
 					if($row['ttktafter']!="")
 					$ttktafterttktdb =$row['ttktafter'];
@@ -344,9 +248,9 @@ for($i=1;$i<=$page;$i++)
 $m = date('m');
 $nm = $m+1;
 $y = date('Y');
-$tin=mysqli_query($link, "select stt from thietbihotro_iso where cdung='1' and ngaykdtt BETWEEN '$y-$m-01 00:00:00' AND '$y-$nm-31 00:00:00'");
+$tin=mysql_query("select stt from thietbihotro_iso where cdung='1' and ngaykdtt BETWEEN '$y-$m-01 00:00:00' AND '$y-$nm-31 00:00:00'");
 $row_per_page=15;
-$rows=mysqli_num_rows($tin);
+$rows=mysql_num_rows($tin);
 if ($rows>$row_per_page) $page=ceil($rows/$row_per_page); 
 else $page=1; 
 if(isset($_GET['start1']) && (int)$_GET['start1'])
@@ -367,10 +271,10 @@ else $start1=0;
     </tr>
    <?php $stt=0; ?>
 <?php
-$sql=mysqli_query($link, "SELECT stt,tenthietbi,tenvt,chusohuu,serialnumber,date_format(`ngaykd`,'%d-%m-%Y') as ngaykd,max(ngaykdtt) as ngaykdtt FROM thietbihotro_iso where cdung='1' and ngaykdtt BETWEEN '$y-$m-01 00:00:00' AND '$y-$nm-31 00:00:00' GROUP BY tenthietbi,serialnumber  order by stt desc limit $start1,$row_per_page");
+$sql=mysql_query("SELECT stt,tenthietbi,tenvt,chusohuu,serialnumber,date_format(`ngaykd`,'%d-%m-%Y') as ngaykd,max(ngaykdtt) as ngaykdtt FROM thietbihotro_iso where cdung='1' and ngaykdtt BETWEEN '$y-$m-01 00:00:00' AND '$y-$nm-31 00:00:00' GROUP BY tenthietbi,serialnumber  order by stt desc limit $start1,$row_per_page");
 
 $today = date('d-m-Y');
-while($row=mysqli_fetch_array($sql)){
+while($row=mysql_fetch_array($sql)){
 	                 //$ht=1;
 		 	 $id =$row['stt'];
 		 	 $tenthietbi =$row['tenthietbi'];
