@@ -778,6 +778,36 @@ $currentGroupName = isset($groupNames[$nhomsct]) ? $groupNames[$nhomsct] : "ALL"
                 
             </div>
         </div>
+
+        <?php
+         // Thống kê nhanh
+         $stats = [
+             'total' => mysqli_num_rows(mysqli_query($link, "SELECT stt FROM hososcbd_iso WHERE bg='0'")),
+             'completed' => mysqli_num_rows(mysqli_query($link, "SELECT stt FROM hososcbd_iso WHERE bg='0' AND ngaykt!='0000-00-00'")),
+             'working' => mysqli_num_rows(mysqli_query($link, "SELECT stt FROM hososcbd_iso WHERE bg='0' AND ngayth!='0000-00-00' AND ngaykt='0000-00-00'")),
+             'pending' => mysqli_num_rows(mysqli_query($link, "SELECT stt FROM hososcbd_iso WHERE bg='0' AND ngayth='0000-00-00' AND ngaykt='0000-00-00'"))
+         ];
+         ?>
+
+         <!-- Statistics Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number" style="color: #3498db;"><?php echo $stats['total']; ?></div>
+                <div class="stat-label">Tổng số thiết bị</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" style="color: #27ae60;"><?php echo $stats['completed']; ?></div>
+                <div class="stat-label">Đã hoàn thành</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" style="color: #f39c12;"><?php echo $stats['working']; ?></div>
+                <div class="stat-label">Đang thực hiện</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" style="color: #e74c3c;"><?php echo $stats['pending']; ?></div>
+                <div class="stat-label">Chờ thực hiện</div>
+            </div>
+        </div>
         
         <!-- Controls -->
         <div class="controls">
@@ -846,37 +876,16 @@ $currentGroupName = isset($groupNames[$nhomsct]) ? $groupNames[$nhomsct] : "ALL"
         // echo "</div>";
         
         
-        // Thống kê nhanh
-        $stats = [
-            'total' => mysqli_num_rows(mysqli_query($link, "SELECT stt FROM hososcbd_iso WHERE bg='0'")),
-            'completed' => mysqli_num_rows(mysqli_query($link, "SELECT stt FROM hososcbd_iso WHERE bg='0' AND ngaykt!='0000-00-00'")),
-            'working' => mysqli_num_rows(mysqli_query($link, "SELECT stt FROM hososcbd_iso WHERE bg='0' AND ngayth!='0000-00-00' AND ngaykt='0000-00-00'")),
-            'pending' => mysqli_num_rows(mysqli_query($link, "SELECT stt FROM hososcbd_iso WHERE bg='0' AND ngayth='0000-00-00' AND ngaykt='0000-00-00'"))
-        ];
+        
         ?>
 
         
 
-        <!-- Statistics Cards -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-number" style="color: #3498db;"><?php echo $stats['total']; ?></div>
-                <div class="stat-label">Tổng số thiết bị</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" style="color: #27ae60;"><?php echo $stats['completed']; ?></div>
-                <div class="stat-label">Đã hoàn thành</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" style="color: #f39c12;"><?php echo $stats['working']; ?></div>
-                <div class="stat-label">Đang thực hiện</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" style="color: #e74c3c;"><?php echo $stats['pending']; ?></div>
-                <div class="stat-label">Chờ thực hiện</div>
-            </div>
-        </div>
-<!-- Search Container -->
+       
+
+
+        
+        <!-- Search Container -->
         <div class="search-container">
             <form method="post" action="tiendocongviec_professional.php" class="search-form">
                 <input type="hidden" name="user" value="<?php echo $username; ?>">
@@ -916,6 +925,7 @@ $currentGroupName = isset($groupNames[$nhomsct]) ? $groupNames[$nhomsct] : "ALL"
                 <?php endif; ?>
             </form>
         </div>
+        
         <!-- Main Work Progress Table -->
         <div class="card">
             <div class="card-header">
