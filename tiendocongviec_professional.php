@@ -1111,7 +1111,7 @@ $currentGroupName = isset($groupNames[$nhomsct]) ? $groupNames[$nhomsct] : "ALL"
                         <!-- Modal nhập thông tin tạm dừng -->
                                     <div class="modal fade" id="pauseModal" tabindex="-1" aria-labelledby="pauseModalLabel" aria-hidden="true">
                                         <div class="modal-dialog">
-                                            <form method="post" action="add_pause.php">
+                                            <form id="pauseForm" method="post" action="add_pause.php">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
                                                         <h5 class="modal-title" id="pauseModalLabel">Thêm lần tạm dừng</h5>
@@ -1138,6 +1138,17 @@ $currentGroupName = isset($groupNames[$nhomsct]) ? $groupNames[$nhomsct] : "ALL"
                                                     </div>
                                                 </div>
                                             </form>
+                                                <!-- Toast thông báo -->
+                                                <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 9999">
+                                                    <div id="pauseToast" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+                                                        <div class="d-flex">
+                                                            <div class="toast-body" id="pauseToastBody">
+                                                                Thêm lần tạm dừng thành công!
+                                                            </div>
+                                                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                         </div>
                                     </div>
 
@@ -1145,12 +1156,81 @@ $currentGroupName = isset($groupNames[$nhomsct]) ? $groupNames[$nhomsct] : "ALL"
                         // Truyền số hồ sơ vào modal khi bấm nút tạm dừng (Bootstrap 5)
                         document.addEventListener('DOMContentLoaded', function() {
                             var pauseModal = document.getElementById('pauseModal');
+                            var pauseForm = document.getElementById('pauseForm');
+                            var pauseToast = document.getElementById('pauseToast');
+                            var pauseToastBody = document.getElementById('pauseToastBody');
+                            var toastInstance = null;
+                            if (pauseToast) {
+                                toastInstance = new bootstrap.Toast(pauseToast, { delay: 3000 });
+                            }
                             if (pauseModal) {
                                 pauseModal.addEventListener('show.bs.modal', function (event) {
                                     var button = event.relatedTarget;
                                     var hoso = button.getAttribute('data-hoso');
                                     var hosoInput = document.getElementById('hosoInput');
                                     if (hosoInput) hosoInput.value = hoso;
+                                });
+                            }
+                            // Xử lý submit form thêm tạm dừng bằng AJAX
+                            if (pauseForm) {
+                                pauseForm.addEventListener('submit', function(e) {
+                                    e.preventDefault();
+                                    var formData = new FormData(pauseForm);
+                                    fetch('add_pause.php', {
+                                        method: 'POST',
+                                        body: formData
+                                    })
+                                    .then(response => response.json())
+                                    .then(data => {
+                                        console.log('Kết quả trả về từ add_pause.php:', data);
+                                        if (data.success) {
+                                            // Đóng modal (dùng getOrCreateInstance để chắc chắn)
+                                            var modal = bootstrap.Modal.getOrCreateInstance(pauseModal);
+                                            if (modal) modal.hide();
+                                            // Hiện toast thành công
+                                            if (pauseToastBody) pauseToastBody.textContent = data.message;
+                                            if (pauseToast) {
+                                                pauseToast.classList.remove('text-bg-danger');
+                                                pauseToast.classList.add('text-bg-success');
+                                                if (toastInstance) toastInstance.show();
+                                            }
+                                            // Reset form
+                                            pauseForm.reset();
+                                            // Reload lại danh sách tạm dừng (nếu có hàm loadPauseList)
+                                            if (typeof loadPauseList === 'function') {
+                                                var hoso = document.getElementById('hosoInput').value;
+                                                loadPauseList(hoso);
+                                            } else {
+                                                // Hoặc reload trang nếu không có AJAX load
+                                                location.reload();
+                                            }
+                                        } else {
+                                            // Hiện toast lỗi
+                                            if (pauseToastBody) pauseToastBody.textContent = data.message;
+                                            if (pauseToast) {
+                                                pauseToast.classList.remove('text-bg-success');
+                                                pauseToast.classList.add('text-bg-danger');
+                                                if (toastInstance) toastInstance.show();
+                                            }
+                                        }
+                                    })
+                                    .catch(() => {
+                                        // Thử log response text để debug lỗi JSON
+                                        fetch('add_pause.php', {
+                                            method: 'POST',
+                                            body: formData
+                                        })
+                                        .then(resp => resp.text())
+                                        .then(txt => {
+                                            console.error('Lỗi parse JSON, response thực tế:', txt);
+                                            if (pauseToastBody) pauseToastBody.textContent = 'Lỗi kết nối máy chủ!';
+                                            if (pauseToast) {
+                                                pauseToast.classList.remove('text-bg-success');
+                                                pauseToast.classList.add('text-bg-danger');
+                                                if (toastInstance) toastInstance.show();
+                                            }
+                                        });
+                                    });
                                 });
                             }
                         });
