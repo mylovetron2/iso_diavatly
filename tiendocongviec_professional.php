@@ -1051,7 +1051,25 @@ $currentGroupName = isset($groupNames[$nhomsct]) ? $groupNames[$nhomsct] : "ALL"
                                     <?php echo $hoso; ?>
                                 </a>
                             </td>
-                            <!-- Cột tạm dừng mới -->
+
+                            <td class="responsive-hide"><?php echo $ngayyc; ?></td>
+                            <td class="responsive-hide"><?php echo $ngayth; ?></td>
+                            <td class="responsive-hide"><?php echo $ngaykt; ?></td>
+                            <td>
+                                <a href="thongkegiolv.php?f=mahoso&s=<?php echo $hoso; ?>&from=all&to=all" class="equipment-link">
+                                    <?php echo $nhomsc; ?>
+                                </a>
+                            </td>
+                            <td>
+                                <span class="status-badge <?php echo $status_class; ?>">
+                                    <?php echo $status_text; ?>
+                                </span>
+                            </td>
+                            <td class="responsive-hide">
+                                <strong><?php echo isset($ngaylv) ? $ngaylv : ''; ?></strong>
+                            </td>
+                            <td class="responsive-hide"><?php echo $vitri; ?></td>
+                            <td class="responsive-hide"><?php echo "$lo / $gieng"; ?></td>
                             <td>
                                 <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#pauseModal" data-hoso="<?php echo $hoso; ?>">
                                     ⏸️
@@ -1081,24 +1099,6 @@ $currentGroupName = isset($groupNames[$nhomsct]) ? $groupNames[$nhomsct] : "ALL"
                                 }
                                 ?>
                             </td>
-                            <td class="responsive-hide"><?php echo $ngayyc; ?></td>
-                            <td class="responsive-hide"><?php echo $ngayth; ?></td>
-                            <td class="responsive-hide"><?php echo $ngaykt; ?></td>
-                            <td>
-                                <a href="thongkegiolv.php?f=mahoso&s=<?php echo $hoso; ?>&from=all&to=all" class="equipment-link">
-                                    <?php echo $nhomsc; ?>
-                                </a>
-                            </td>
-                            <td>
-                                <span class="status-badge <?php echo $status_class; ?>">
-                                    <?php echo $status_text; ?>
-                                </span>
-                            </td>
-                            <td class="responsive-hide">
-                                <strong><?php echo isset($ngaylv) ? $ngaylv : ''; ?></strong>
-                            </td>
-                            <td class="responsive-hide"><?php echo $vitri; ?></td>
-                            <td class="responsive-hide"><?php echo "$lo / $gieng"; ?></td>
                         </tr>
                         <?php
                             $stt++;
