@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Các trường trong bảng hososcbd_iso</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f8f9fa;
+        }
+
+        table {
+            border-collapse: collapse;
+            margin: 40px auto;
+            background: #fff;
+            box-shadow: 0 2px 8px #ccc;
+        }
+
+        th,
+        td {
+            border: 1px solid #bbb;
+            padding: 10px 18px;
+            text-align: left;
+        }
+
+        th {
+            background: #007bff;
+            color: #fff;
+        }
+
+        tr:nth-child(even) {
+            background: #f2f2f2;
+        }
+
+        caption {
+            font-size: 1.5em;
+            margin-bottom: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .desc {
+            color: #555;
+            font-size: 0.98em;
+        }
+
+        code {
+            font-family: Consolas, monospace;
+            background: #eef;
+            padding: 2px 4px;
+            border-radius: 4px;
+        }
+
+        section {
+            max-width: 800px;
+            margin: 40px auto 0 auto;
+            padding: 24px 28px;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px #ccc;
+        }
+
+        h2 {
+            color: #007bff;
+            font-size: 1.25em;
+            margin-bottom: 12px;
+        }
+
+        ol {
+            color: #333;
+            font-size: 1.08em;
+        }
+
+        ul {
+            margin: 8px 0 16px 20px;
+            color: #333;
+            font-size: 1em;
+        }
+    </style>
+</head>
+
+<body>
+    <table>
+        <caption>Các trường trong bảng <b>hososcbd_iso</b></caption>
+        <tr>
+            <th>Tên trường</th>
+            <th>Mô tả</th>
+        </tr>
+        <tr>
+            <td>stt</td>
+            <td>Số thứ tự (khóa chính, tự tăng)</td>
+        </tr>
+        <tr>
+            <td>mavt</td>
+            <td>Mã vật tư/thiết bị</td>
+        </tr>
+        <tr>
+            <td>somay</td>
+            <td>Số máy</td>
+        </tr>
+        <tr>
+            <td>model</td>
+            <td>Model thiết bị</td>
+        </tr>
+        <tr>
+            <td>cv</td>
+            <td>Công việc (SC: sửa chữa, BD: bảo dưỡng, KT: kiểm tra...)</td>
+        </tr>
+        <tr>
+            <td>ngayyc</td>
+            <td>Ngày yêu cầu dịch vụ</td>
+        </tr>
+        <tr>
+            <td>ngayth</td>
+            <td>Ngày thực hiện</td>
+        </tr>
+        <tr>
+            <td>hoso</td>
+            <td>Số hồ sơ</td>
+        </tr>
+        <tr>
+            <td>nhomsc</td>
+            <td>Nhóm sửa chữa</td>
+        </tr>
+        <tr>
+            <td>ngaykt</td>
+            <td>Ngày kết thúc</td>
+        </tr>
+        <tr>
+            <td>ttktafter</td>
+            <td>Tình trạng kỹ thuật sau sửa chữa</td>
+        </tr>
+        <tr>
+            <td>vitrimaybd</td>
+            <td>Vị trí máy bắt đầu</td>
+        </tr>
+        <tr>
+            <td>lo</td>
+            <td>Lô sản xuất</td>
+        </tr>
+        <tr>
+            <td>gieng</td>
+            <td>Giếng</td>
+        </tr>
+        <tr>
+            <td>bg</td>
+            <td>Trạng thái (0: đang hoạt động, 1: đã xóa/không hoạt động)</td>
+        </tr>
+        <tr>
+            <td>...</td>
+            <td><span class="desc">(Có thể còn các trường khác tùy cấu trúc SQL gốc)</span></td>
+        </tr>
+    </table>
+    <div style="max-width:700px;margin:30px auto;color:#555;font-size:1.05em;">
+        <b>Ghi chú:</b> Đây là các trường chính thường dùng trong code và giao diện. Nếu bạn cần đầy đủ mọi trường, hãy
+        kiểm tra lệnh <code>CREATE TABLE</code> trong file SQL gốc.
+    </div>
+    <section>
+        <h3>Cách tính số ngày làm việc và điều kiện tính số ngày sửa chữa ($ngaysc)</h3>
+        <ul>
+            <li><b>Số ngày sửa chữa ($ngaysc):</b>
+                <ul>
+                    <li>Nếu <b>đã có ngày thực hiện ($ngayth) và ngày kết thúc ($ngaykt)</b>:<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;$ngaysc = số ngày giữa $ngayth và $ngaykt (lấy từ SQL:
+                        <code>datediff(ngaykt, ngayth)</code>).</li>
+                    <li>Nếu <b>chỉ có ngày thực hiện ($ngayth), chưa có ngày kết thúc ($ngaykt)</b>:<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;$ngaysc = số ngày từ $ngayth đến ngày hiện tại (tính bằng PHP).</li>
+                    <li>Nếu <b>chưa có ngày thực hiện</b> ($ngayth = "00-00-0000"): <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;Không tính $ngaysc.</li>
+                </ul>
+            </li>
+            <li><b>Số ngày làm việc ($ngaylv):</b>
+                <ul>
+                    <li>$ngaylv = $ngaysc - số ngày thứ 7, Chủ nhật - số ngày lễ + 1</li>
+                    <li>Sử dụng các hàm <code>getsunandsat</code> (đếm số ngày thứ 7, Chủ nhật) và
+                        <code>getholiday</code> (đếm số ngày lễ) để loại trừ các ngày không làm việc.</li>
+                    <li>Nếu chưa có đủ dữ liệu ngày thực hiện hoặc ngày kết thúc, $ngaylv sẽ để trống.</li>
+                </ul>
+            </li>
+        </ul>
+        <p><b>Lưu ý:</b> Các điều kiện này được áp dụng trong file <code>tiendocongviec.php</code> để đảm bảo số ngày
+            làm việc phản ánh đúng thực tế, loại trừ ngày nghỉ và ngày lễ.</p>
+    </section>
+    <section>
+        <h2>Cách xác định giá trị <code>$tiendo</code></h2>
+        <ol>
+            <li><b>Trường hợp 1:</b> Nếu cả <code>$ngayth</code> (ngày thực hiện) và <code>$ngaykt</code> (ngày kết
+                thúc) đều là <b>"00-00-0000"</b> (chưa thực hiện gì):
+                <ul>
+                    <li>Nếu <code>$cv == "KT"</code>: <b>$tiendo = "Máy đang chờ kiểm tra"</b></li>
+                    <li>Nếu <code>$cv == "BD"</code>: <b>$tiendo = "Máy đang chờ bảo dưỡng"</b></li>
+                    <li>Nếu <code>$cv == "SC"</code>: <b>$tiendo = "Máy đang chờ sửa chữa"</b></li>
+                    <li>Nếu không xác định: <b>$tiendo = "Chưa xác định công việc của máy"</b></li>
+                </ul>
+            </li>
+            <li><b>Trường hợp 2:</b> Nếu đã có ngày thực hiện nhưng chưa có ngày kết thúc (<code>$ngayth</code> khác
+                "00-00-0000", <code>$ngaykt</code> là "00-00-0000"):
+                <ul>
+                    <li>Nếu <code>$cv == "KT"</code>: <b>$tiendo = "Máy đang kiểm tra"</b></li>
+                    <li>Nếu <code>$cv == "BD"</code>: <b>$tiendo = "Máy đang bảo dưỡng"</b></li>
+                    <li>Nếu <code>$cv == "SC"</code>: <b>$tiendo = "Máy đang sửa chữa"</b></li>
+                    <li>Nếu không xác định: <b>$tiendo = "Chưa xác định công việc của máy"</b></li>
+                    <li>Nếu <code>$ttktafter == "Chờ vật tư thay thế"</code>: <b>$tiendo = "Máy đang chờ phụ tùng thay
+                            thế"</b></li>
+                </ul>
+            </li>
+            <li><b>Trường hợp 3:</b> Nếu đã có cả ngày thực hiện và ngày kết thúc (<code>$ngayth</code> và
+                <code>$ngaykt</code> đều khác "00-00-0000"):
+                <ul>
+                    <li>Nếu <code>$cv == "KT"</code>: <b>$tiendo = "Máy đã KT xong chờ bàn giao"</b></li>
+                    <li>Nếu <code>$cv == "BD"</code>: <b>$tiendo = "Máy đã BD xong chờ bàn giao"</b></li>
+                    <li>Nếu <code>$cv == "SC"</code>: <b>$tiendo = "Máy đã SC xong chờ bàn giao"</b></li>
+                    <li>Nếu không xác định: <b>$tiendo = "Chưa xác định công việc của máy"</b></li>
+                    <li>Nếu <code>$ttktafter == "Hỏng"</code>: <b>$tiendo = "Máy hỏng không khắc phục được"</b></li>
+                    <li>Nếu <code>$ttktafter == "Chờ vật tư thay thế"</code>: <b>$tiendo = "Máy đang chờ phụ tùng thay
+                            thế"</b></li>
+                </ul>
+            </li>
+        </ol>
+    </section>
+</body>
+
+</html>

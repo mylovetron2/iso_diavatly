@@ -952,6 +952,7 @@ $currentGroupName = isset($groupNames[$nhomsct]) ? $groupNames[$nhomsct] : "ALL"
                             <th style="width: 80px;" class="responsive-hide">Số Ngày</th>
                             <th style="width: 120px;" class="responsive-hide">Vị Trí</th>
                             <th style="width: 120px;" class="responsive-hide">Lô/Giếng</th>
+                            <th style="width: 120px;">Tạm dừng</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -1050,6 +1051,36 @@ $currentGroupName = isset($groupNames[$nhomsct]) ? $groupNames[$nhomsct] : "ALL"
                                     <?php echo $hoso; ?>
                                 </a>
                             </td>
+                            <!-- Cột tạm dừng mới -->
+                            <td>
+                                <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#pauseModal" data-hoso="<?php echo $hoso; ?>">
+                                    ⏸️
+                                </button>
+                                <?php
+                                $pause_result = mysqli_query($link, "SELECT id, pause_start, pause_end, pause_reason FROM hososcbd_iso_pauses WHERE hoso='" . mysqli_real_escape_string($link, $hoso) . "' ORDER BY pause_start");
+                                if ($pause_result && mysqli_num_rows($pause_result) > 0) {
+                                    echo '<div class="mt-1">';
+                                    echo '<button class="btn btn-link btn-sm p-0" type="button" data-bs-toggle="collapse" data-bs-target="#pauseList_' . $hoso . '" aria-expanded="false" aria-controls="pauseList_' . $hoso . '">';
+                                    echo '<span class="badge bg-secondary">' . mysqli_num_rows($pause_result) . ' lần</span>';
+                                    echo '</button>';
+                                    echo '<div class="collapse" id="pauseList_' . $hoso . '"><ul class="list-group list-group-flush">';
+                                    while ($pause = mysqli_fetch_assoc($pause_result)) {
+                                        echo '<li class="list-group-item py-1 px-2 d-flex align-items-center justify-content-between">';
+                                        echo '<span><b>' . htmlspecialchars($pause['pause_start']) . '</b> - <b>' . htmlspecialchars($pause['pause_end']) . '</b>';
+                                        if (!empty($pause['pause_reason'])) {
+                                            echo ' <span style="color:#888;">(' . htmlspecialchars($pause['pause_reason']) . ')</span>';
+                                        }
+                                        echo '</span>';
+                                        echo '<span>';
+                                        echo '<a href="edit_pause.php?id=' . $pause['id'] . '" class="btn btn-outline-primary btn-sm btn-icon" title="Sửa"><i class="fas fa-edit"></i></a> ';
+                                        echo '<a href="delete_pause.php?id=' . $pause['id'] . '" class="btn btn-outline-danger btn-sm btn-icon" title="Xóa" onclick="return confirm(\'Xác nhận xóa lần tạm dừng này?\');"><i class="fas fa-trash"></i></a>';
+                                        echo '</span>';
+                                        echo '</li>';
+                                    }
+                                    echo '</ul></div></div>';
+                                }
+                                ?>
+                            </td>
                             <td class="responsive-hide"><?php echo $ngayyc; ?></td>
                             <td class="responsive-hide"><?php echo $ngayth; ?></td>
                             <td class="responsive-hide"><?php echo $ngaykt; ?></td>
@@ -1075,7 +1106,59 @@ $currentGroupName = isset($groupNames[$nhomsct]) ? $groupNames[$nhomsct] : "ALL"
                         ?>
                     </tbody>
                 </table>
-            </div>
+                        </div>
+
+                        <!-- Modal nhập thông tin tạm dừng -->
+                                    <div class="modal fade" id="pauseModal" tabindex="-1" aria-labelledby="pauseModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <form method="post" action="add_pause.php">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="pauseModalLabel">Thêm lần tạm dừng</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <input type="hidden" name="hoso" id="hosoInput">
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Ngày bắt đầu</label>
+                                                            <input type="date" name="pause_start" class="form-control" required>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Ngày kết thúc</label>
+                                                            <input type="date" name="pause_end" class="form-control" required>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Lý do</label>
+                                                            <textarea name="pause_reason" class="form-control"></textarea>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="submit" class="btn btn-primary">Lưu</button>
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+
+                        <script>
+                        // Truyền số hồ sơ vào modal khi bấm nút tạm dừng (Bootstrap 5)
+                        document.addEventListener('DOMContentLoaded', function() {
+                            var pauseModal = document.getElementById('pauseModal');
+                            if (pauseModal) {
+                                pauseModal.addEventListener('show.bs.modal', function (event) {
+                                    var button = event.relatedTarget;
+                                    var hoso = button.getAttribute('data-hoso');
+                                    var hosoInput = document.getElementById('hosoInput');
+                                    if (hosoInput) hosoInput.value = hoso;
+                                });
+                            }
+                        });
+                        </script>
+</body>
+<!-- Bootstrap 5 CSS & JS (chèn nếu chưa có) -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
             
             <!-- Pagination -->
             <div class="pagination">
