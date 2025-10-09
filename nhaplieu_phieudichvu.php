@@ -41,15 +41,37 @@ if ($solan=="") $solan=0;
     <title>Nhập phiếu yêu cầu dịch vụ</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <style>
-        body { background: #f8f9fa; }
-        .form-section { background: #fff; border-radius: 10px; box-shadow: 0 2px 8px #0001; padding: 32px; margin: 32px auto; max-width: 1100px; }
-        .table thead th { background: #0d6efd; color: #fff; }
-        .table td, .table th { vertical-align: middle; }
-        .form-label { font-weight: 500; }
-        .btn-primary { min-width: 140px; font-size: 1.1rem; }
-        .table-responsive { margin-top: 24px; }
-    </style>
+</style>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script>
+    $(document).ready(function() {
+        function getSomay(thietbiSelect, somaySelect, donvi) {
+            var val = $(thietbiSelect).val();
+            var mavt = val.split('.')[0];
+            if (!mavt) {
+                $(somaySelect).html('<option value=""></option>');
+                return;
+            }
+            $.post('get_somay_by_thietbi.php', { mavt: mavt, donvi: donvi }, function(data) {
+                if (data.success) {
+                    var html = '<option value=""></option>';
+                    for (var i = 0; i < data.options.length; i++) {
+                        html += '<option value="' + data.options[i].value + '">' + data.options[i].label + '</option>';
+                    }
+                    $(somaySelect).html(html);
+                } else {
+                    $(somaySelect).html('<option value=""></option>');
+                }
+            }, 'json');
+        }
+        var donvi = $('select[name="donvi"]').val();
+        for (let i = 1; i <= 5; i++) {
+            $(document).on('change', 'select[name="thietbi'+i+'"]', function() {
+                getSomay(this, 'select[name="somay'+i+'"]', donvi);
+            });
+        }
+    });
+    </script>
 </head>
 <body>
 <div class="container">
