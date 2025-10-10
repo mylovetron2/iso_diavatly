@@ -58,15 +58,30 @@ $hoso = isset($_POST['hoso']) ? $_POST['hoso'] : 'phieusuachua';
                         </div>
                     </div>
                     <div class="row g-4 mb-4">
-                        <div class="col-md-6">
-                            <div class="card border-0 shadow-sm h-100" style="border-radius:14px;">
+                        <div class="col-12">
+                            <div class="card border-0 shadow-sm" style="border-radius:14px;">
                                 <div class="card-header bg-info text-white fw-bold" style="border-radius:14px 14px 0 0;">Người thực hiện</div>
                                 <div class="card-body p-2">
                                     <?php for($i=1;$i<=5;$i++): ?>
                                     <div class="row mb-2 align-items-center">
-                                        <div class="col-2 text-end pe-0"><span class="badge bg-secondary">#<?php echo $i; ?></span></div>
-                                        <div class="col-6"><input type="text" name="hoten<?php echo $i; ?>" class="form-control form-control-sm rounded-2" placeholder="Họ tên"></div>
+                                        <div class="col-1 text-end pe-0"><span class="badge bg-secondary">#<?php echo $i; ?></span></div>
+                                        <div class="col-7"><input type="text" name="hoten<?php echo $i; ?>" class="form-control form-control-sm rounded-2" placeholder="Họ tên"></div>
                                         <div class="col-4"><input type="text" name="gio<?php echo $i; ?>" class="form-control form-control-sm rounded-2" placeholder="Giờ làm"></div>
+                                    </div>
+                                    <?php endfor; ?>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-6">
+                            <div class="card border-0 shadow-sm h-100" style="border-radius:14px;">
+                                <div class="card-header bg-primary text-white fw-bold" style="border-radius:14px 14px 0 0;">Bảng số liệu cần thiết</div>
+                                <div class="card-body p-2">
+                                    <?php for($i=1;$i<=5;$i++): ?>
+                                    <div class="row mb-2 align-items-center">
+                                        <div class="col-7"><input type="text" name="ten_tl<?php echo $i; ?>" class="form-control form-control-sm rounded-2" placeholder="Tên tài liệu"></div>
+                                        <div class="col-5"><input type="file" name="file_tl<?php echo $i; ?>" class="form-control form-control-sm rounded-2"></div>
                                     </div>
                                     <?php endfor; ?>
                                 </div>
@@ -105,21 +120,8 @@ $hoso = isset($_POST['hoso']) ? $_POST['hoso'] : 'phieusuachua';
                         </div>
                     </div>
                     <div class="row g-4 mb-4">
-                        <div class="col-md-7">
-                            <div class="card border-0 shadow-sm h-100" style="border-radius:14px;">
-                                <div class="card-header bg-primary text-white fw-bold" style="border-radius:14px 14px 0 0;">Bảng số liệu cần thiết</div>
-                                <div class="card-body p-2">
-                                    <?php for($i=1;$i<=5;$i++): ?>
-                                    <div class="row mb-2 align-items-center">
-                                        <div class="col-7"><input type="text" name="ten_tl<?php echo $i; ?>" class="form-control form-control-sm rounded-2" placeholder="Tên tài liệu"></div>
-                                        <div class="col-5"><input type="file" name="file_tl<?php echo $i; ?>" class="form-control form-control-sm rounded-2"></div>
-                                    </div>
-                                    <?php endfor; ?>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-5">
-                            <div class="card border-0 shadow-sm h-100" style="border-radius:14px;">
+                        <div class="col-12">
+                            <div class="card border-0 shadow-sm" style="border-radius:14px;">
                                 <div class="card-header bg-danger text-white fw-bold" style="border-radius:14px 14px 0 0;">Kiểm tra kỹ thuật sau sửa</div>
                                 <div class="card-body p-2 bg-light">
                                     <textarea name="kiemtra_bdsc" class="form-control rounded-3" style="min-height:120px;" placeholder="Nhận xét kỹ thuật..."><?php echo isset($_POST['kiemtra_bdsc']) ? htmlspecialchars($_POST['kiemtra_bdsc']) : ''; ?></textarea>
