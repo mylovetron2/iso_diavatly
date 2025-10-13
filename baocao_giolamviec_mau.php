@@ -88,9 +88,10 @@ function resetTableRows() {
 }
 </script>
 
-<table border="1" cellpadding="5" cellspacing="0">
-<tr><th>STT</th><th>Số hồ sơ</th><th>Ngày bắt đầu</th><th>Ngày kết thúc</th><th>Người thực hiện</th><th>Tổng số giờ làm việc</th></tr>
 <?php
+$tong_sohoso = 0;
+$tong_gio_all = 0;
+$rows_html = '';
 $stt = 1;
 while($row_hoso = mysql_fetch_array($sql_hoso)) {
     $hoso = $row_hoso['hoso'];
@@ -131,51 +132,35 @@ while($row_hoso = mysql_fetch_array($sql_hoso)) {
             $ds_nv[] = $hoten;
         }
     }
+    $show_row = false;
     if ($staff_filter === 'only_no_staff') {
-        if ($tong_gio == 0) {
-            echo '<tr>';
-            echo '<td>'.$stt.'</td>';
-            echo '<td>'.$hoso.'</td>';
-            echo '<td>'.$ngayth.'</td>';
-            echo '<td>'.$ngaykt.'</td>';
-            echo '<td colspan="2">Không có nhân viên thực hiện</td>';
-            echo '</tr>';
-            $stt++;
-        }
+        if ($tong_gio == 0) $show_row = true;
     } elseif ($staff_filter === 'hide_no_staff') {
+        if ($tong_gio > 0) $show_row = true;
+    } else {
+        $show_row = true;
+    }
+    if ($show_row) {
+        $rows_html .= '<tr>';
+        $rows_html .= '<td>'.$stt.'</td>';
+        $rows_html .= '<td>'.$hoso.'</td>';
+        $rows_html .= '<td>'.$ngayth.'</td>';
+        $rows_html .= '<td>'.$ngaykt.'</td>';
         if ($tong_gio > 0) {
-            echo '<tr>';
-            echo '<td>'.$stt.'</td>';
-            echo '<td>'.$hoso.'</td>';
-            echo '<td>'.$ngayth.'</td>';
-            echo '<td>'.$ngaykt.'</td>';
-            echo '<td>'.htmlspecialchars(implode(", ", $ds_nv)).'</td>';
-            echo '<td>'.$tong_gio.'</td>';
-            echo '</tr>';
-            $stt++;
-        }
-    } else { // all
-        if ($tong_gio > 0) {
-            echo '<tr>';
-            echo '<td>'.$stt.'</td>';
-            echo '<td>'.$hoso.'</td>';
-            echo '<td>'.$ngayth.'</td>';
-            echo '<td>'.$ngaykt.'</td>';
-            echo '<td>'.htmlspecialchars(implode(", ", $ds_nv)).'</td>';
-            echo '<td>'.$tong_gio.'</td>';
-            echo '</tr>';
-            $stt++;
+            $rows_html .= '<td>'.htmlspecialchars(implode(", ", $ds_nv)).'</td>';
+            $rows_html .= '<td>'.$tong_gio.'</td>';
+            $tong_gio_all += $tong_gio;
         } else {
-            echo '<tr>';
-            echo '<td>'.$stt.'</td>';
-            echo '<td>'.$hoso.'</td>';
-            echo '<td>'.$ngayth.'</td>';
-            echo '<td>'.$ngaykt.'</td>';
-            echo '<td colspan="2">Không có nhân viên thực hiện</td>';
-            echo '</tr>';
-            $stt++;
+            $rows_html .= '<td colspan="2">Không có nhân viên thực hiện</td>';
         }
+        $rows_html .= '</tr>';
+        $stt++;
+        $tong_sohoso++;
     }
 }
 ?>
+<div style="margin-bottom:10px;font-weight:bold;">Tổng số hồ sơ: <?php echo $tong_sohoso; ?> | Tổng số giờ làm việc: <?php echo $tong_gio_all; ?></div>
+<table border="1" cellpadding="5" cellspacing="0">
+<tr><th>STT</th><th>Số hồ sơ</th><th>Ngày bắt đầu</th><th>Ngày kết thúc</th><th>Người thực hiện</th><th>Tổng số giờ làm việc</th></tr>
+<?php echo $rows_html; ?>
 </table>
