@@ -20,13 +20,7 @@ $nam = isset($_GET['year']) ? intval($_GET['year']) : date('Y');
     <legend><b>Chọn khoảng thời gian</b></legend>
     <label>Từ ngày: <input type="date" name="from_date" value="<?php echo isset($_GET['from_date']) ? htmlspecialchars($_GET['from_date']) : ''; ?>"></label>
     <label>Đến ngày: <input type="date" name="to_date" value="<?php echo isset($_GET['to_date']) ? htmlspecialchars($_GET['to_date']) : ''; ?>"></label>
-    <br><span style="font-size:12px;color:#888;">(Hoặc chọn theo tháng)</span><br>
-    <label>Từ tháng: <input type="number" min="1" max="12" name="from_month" value="<?php echo isset($_GET['from_month']) ? intval($_GET['from_month']) : date('m'); ?>" style="width:50px;"></label>
-    <label>Đến tháng: <input type="number" min="1" max="12" name="to_month" value="<?php echo isset($_GET['to_month']) ? intval($_GET['to_month']) : date('m'); ?>" style="width:50px;"></label>
-    <label>Năm: <input type="number" min="2000" max="2100" name="year" value="<?php echo isset($_GET['year']) ? intval($_GET['year']) : date('Y'); ?>" style="width:70px;"></label>
-    <br><br>
-    <label>Tìm kiếm: <input type="text" name="search" placeholder="Số hồ sơ, tên nhân viên, tên thiết bị" value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>" style="width:220px;"></label>
-    <br><br>
+    
     <label>Lọc hồ sơ:
       <select name="staff_filter">
         <option value="all" <?php if(!isset($_GET['staff_filter']) || $_GET['staff_filter']==='all') echo 'selected'; ?>>Tất cả</option>
@@ -66,6 +60,33 @@ if ($staff_filter === 'only_no_staff') {
 }
 $sql_hoso = mysql_query("SELECT * FROM hososcbd_iso WHERE $where ORDER BY hoso");
 ?>
+
+<!-- Lọc bảng bằng JS, không reload SQL -->
+<div style="margin-bottom:10px;">
+  <input type="text" id="tableSearchInput" placeholder="Tìm kiếm nhanh trong bảng..." style="width:200px;">
+  <button type="button" onclick="filterTableRows()">Tìm kiếm</button>
+  <button type="button" onclick="resetTableRows()">Hiện tất cả</button>
+</div>
+<script>
+function filterTableRows() {
+  var input = document.getElementById('tableSearchInput');
+  var filter = input.value.toLowerCase();
+  var table = document.querySelector('table');
+  var trs = table.getElementsByTagName('tr');
+  for (var i = 1; i < trs.length; i++) { // Bỏ qua header
+    var rowText = trs[i].innerText.toLowerCase();
+    if (filter === '' || rowText.indexOf(filter) !== -1) {
+      trs[i].style.display = '';
+    } else {
+      trs[i].style.display = 'none';
+    }
+  }
+}
+function resetTableRows() {
+  document.getElementById('tableSearchInput').value = '';
+  filterTableRows();
+}
+</script>
 
 <table border="1" cellpadding="5" cellspacing="0">
 <tr><th>STT</th><th>Số hồ sơ</th><th>Ngày bắt đầu</th><th>Ngày kết thúc</th><th>Người thực hiện</th><th>Tổng số giờ làm việc</th></tr>
